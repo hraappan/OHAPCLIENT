@@ -1,17 +1,28 @@
 package fi.oulu.tol.esde35.ohapclient35;
 
+import android.content.Context;
 import android.database.DataSetObserver;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
 import android.widget.TextView;
-import android.content.Context;
+
+import com.opimobi.ohap.Device;
+
+import java.util.ArrayList;
 
 /**
  * Created by geldan on 13.4.2015.
  */
 public class MyListAdapter implements ListAdapter {
+
+    private ArrayList <Device> prefix = null;
+
+
+    public MyListAdapter(ArrayList<Device> prefix) {
+        this.prefix = prefix;
+    }
     /**
      * Indicates whether all the items in this adapter are enabled. If the
      * value returned by this method changes over time, there is no guarantee
@@ -72,7 +83,8 @@ public class MyListAdapter implements ListAdapter {
     @Override
     public int getCount()
     {
-        return 10;
+
+        return prefix.size();
     }
 
     /**
@@ -146,13 +158,13 @@ public class MyListAdapter implements ListAdapter {
             }
             else viewHolder = (ViewHolder)convertView.getTag();
 
-       viewHolder.myTextView.setText("Row " + position);
+       viewHolder.myTextView.setText(prefix.get(position).getName());
 
         return convertView;
     }
 
-    public static class ViewHolder
-    {
+    //ViewHolder to keep the rubber stamps of views.
+    public static class ViewHolder {
         public TextView myTextView;
     }
 

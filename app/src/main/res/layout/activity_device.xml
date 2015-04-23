@@ -19,20 +19,23 @@
         android:layout_height="wrap_content"
         android:id="@+id/textView_path"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"/>
 
     <TextView android:text="@string/textView_name" android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textView_name"
         android:layout_below="@+id/textView_path"
         android:layout_alignRight="@+id/textView_path"
-        android:layout_alignEnd="@+id/textView_path" />
+        android:layout_alignEnd="@+id/textView_path"
+        android:visibility="gone"/>
 
     <TextView android:text="@string/textView_description" android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textView_description"
         android:layout_below="@+id/textView_name"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"/>
 
     <Switch
         android:layout_width="40pt"

@@ -13,6 +13,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Switch;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import com.opimobi.ohap.Device;
 
@@ -20,6 +21,7 @@ import org.w3c.dom.Text;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -29,6 +31,8 @@ public class DeviceActivity extends ActionBarActivity {
     protected Switch mySwitch = null;
     protected SeekBar mySeekBar = null;
     protected MyCentralUnit centralUnit = null;
+    ArrayList <Device> devices;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,38 +50,24 @@ public class DeviceActivity extends ActionBarActivity {
             Log.d(TAG, "Something went wrong with the URL: " + except);
         }
 
-
         //Dummy Device:
         Device device = new Device(centralUnit, 1, Device.Type.ACTUATOR, Device.ValueType.DECIMAL);
         device.setName("Ceiling Lamp");
+        //Dummy Device:
+        Device device1 = new Device(centralUnit, 2, Device.Type.ACTUATOR, Device.ValueType.BINARY);
+        device1.setName("Outdoor lights");
+        //Dummy Device:
+        Device device2 = new Device(centralUnit, 3, Device.Type.ACTUATOR, Device.ValueType.DECIMAL);
+        device2.setName("Sauna lights");
+        //Add dummy devices in the list.
+        devices = new ArrayList<Device>();
+        devices.add(device);
+        devices.add(device1);
+        devices.add(device2);
 
-        //Set dummy values:
-        TextView myTextViewName = (TextView) findViewById(R.id.textView_name);
-        myTextViewName.setText(device.getName());
-
-        //Set title.
-        setTitle(device.getType().toString());
-
-
-        //If the device is binary type we show the switch.
-        if(device.getValueType() == Device.ValueType.BINARY) {
-            mySwitch = (Switch) findViewById(R.id.switch_value);
-            if(mySeekBar != null)
-                mySeekBar.setVisibility(View.GONE);
-            mySwitch.setVisibility(View.VISIBLE);
-        }
-
-        //Else we show the seekbar.
-        else {
-            mySeekBar = (SeekBar) findViewById(R.id.seekBar_value);
-            if(mySwitch != null)
-                mySwitch.setVisibility(View.GONE);
-            mySeekBar.setVisibility(View.VISIBLE);
-        }
-
-        ListView myListView = (ListView) findViewById(R.id.ListView);
+        final ListView myListView = (ListView) findViewById(R.id.ListView);
         MyListAdapter myAdapter;
-            myAdapter = new MyListAdapter();
+            myAdapter = new MyListAdapter(devices);
             myListView.setAdapter(myAdapter);
 
         //Add listener to the myListView.
@@ -98,11 +88,44 @@ public class DeviceActivity extends ActionBarActivity {
              */
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //DO SOMETHING.
+                Toast.makeText(DeviceActivity.this, "Row " + position + " selected", Toast.LENGTH_SHORT).show();
+
+                //Hide the list view.
+                myListView.setVisibility(View.GONE);
+                showDevice(devices.get(position));
             }
         });
     }
 
+    //Shows the selected device on the screen with the control functions.
+    public void showDevice(Device device) {
+
+
+        //Set device name:
+        TextView myTextViewName = (TextView) findViewById(R.id.textView_name);
+        myTextViewName.setText(device.getName());
+        myTextViewName.setVisibility(View.VISIBLE);
+
+        //Set title.
+        setTitle(device.getType().toString());
+
+
+        //If the device is binary type we show the switch.
+        if(device.getValueType() == Device.ValueType.BINARY) {
+            mySwitch = (Switch) findViewById(R.id.switch_value);
+            if(mySeekBar != null)
+                mySeekBar.setVisibility(View.GONE);
+            mySwitch.setVisibility(View.VISIBLE);
+        }
+
+        //Else we show the seekbar.
+        else {
+            mySeekBar = (SeekBar) findViewById(R.id.seekBar_value);
+            if(mySwitch != null)
+                mySwitch.setVisibility(View.GONE);
+            mySeekBar.setVisibility(View.VISIBLE);
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
