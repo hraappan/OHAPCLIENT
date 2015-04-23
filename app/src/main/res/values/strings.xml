@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">OHAP CLIENT 35</string>
+    <string name="textView_path"></string>
+    <string name="textView_name"></string>
+    <string name="textView_description"></string>
+    <string name="action_settings">Settings</string>
+
+</resources>
