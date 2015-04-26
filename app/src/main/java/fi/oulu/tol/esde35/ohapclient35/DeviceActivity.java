@@ -100,8 +100,8 @@ public class DeviceActivity extends ActionBarActivity {
 
                 //Hide the list view.
                 myListView.setVisibility(View.GONE);
-                Intent intent = new Intent(DeviceActivity.this, DeviceActivity.class);
-                startActivity(intent);
+                //Intent intent = new Intent(DeviceActivity.this, DeviceActivity.class);
+                //startActivity(intent);
                 //Set device name:
 
                 TextView myTextViewName = (TextView) findViewById(R.id.textView_name);
