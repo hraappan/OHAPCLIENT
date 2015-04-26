@@ -97,7 +97,7 @@ public class DeviceActivity extends ActionBarActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(DeviceActivity.this, "Row " + position + " selected", Toast.LENGTH_SHORT).show();
-               
+
                 //Hide the list view.
                 myListView.setVisibility(View.GONE);
                 Intent intent = new Intent(DeviceActivity.this, DeviceActivity.class);
