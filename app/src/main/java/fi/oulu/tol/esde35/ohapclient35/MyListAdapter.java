@@ -18,6 +18,7 @@ import java.util.ArrayList;
 public class MyListAdapter implements ListAdapter {
 
     private ArrayList <Device> prefix = null;
+    private final String TAG = "fi.oulu.tol.esde35.ohapclient35.MyListAdapter";
 
 
     public MyListAdapter(ArrayList<Device> prefix) {
@@ -160,7 +161,7 @@ public class MyListAdapter implements ListAdapter {
 
        viewHolder.myTextView.setText(prefix.get(position).getName());
 
-        return convertView;
+       return convertView;
     }
 
     //ViewHolder to keep the rubber stamps of views.

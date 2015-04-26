@@ -1,8 +1,14 @@
 package fi.oulu.tol.esde35.ohapclient35;
 
-import android.os.Debug;
-import android.support.v7.app.ActionBarActivity;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceFragment;
+import android.support.v4.app.NotificationCompat;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -10,19 +16,15 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.Switch;
-import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.opimobi.ohap.Device;
 
-import org.w3c.dom.Text;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class DeviceActivity extends ActionBarActivity {
@@ -31,7 +33,8 @@ public class DeviceActivity extends ActionBarActivity {
     protected Switch mySwitch = null;
     protected SeekBar mySeekBar = null;
     protected MyCentralUnit centralUnit = null;
-    ArrayList <Device> devices;
+    ArrayList<Device> devices;
+    protected String EXTRA_PREFIX = "";
 
 
     @Override
@@ -39,13 +42,15 @@ public class DeviceActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device);
 
+
+
+
+
         try {
             centralUnit = new MyCentralUnit(new URL("http://ohap.opimobi.com:8080/"));
             centralUnit.setName("OHAP Test Server");
 
-        }
-
-        catch(MalformedURLException except) {
+        } catch (MalformedURLException except) {
 
             Log.d(TAG, "Something went wrong with the URL: " + except);
         }
@@ -67,8 +72,11 @@ public class DeviceActivity extends ActionBarActivity {
 
         final ListView myListView = (ListView) findViewById(R.id.ListView);
         MyListAdapter myAdapter;
-            myAdapter = new MyListAdapter(devices);
-            myListView.setAdapter(myAdapter);
+        myAdapter = new MyListAdapter(devices);
+        myListView.setAdapter(myAdapter);
+
+        //Launch notification.
+        showNotification();
 
         //Add listener to the myListView.
         myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -89,48 +97,48 @@ public class DeviceActivity extends ActionBarActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(DeviceActivity.this, "Row " + position + " selected", Toast.LENGTH_SHORT).show();
-
+               
                 //Hide the list view.
                 myListView.setVisibility(View.GONE);
-                showDevice(devices.get(position));
+                Intent intent = new Intent(DeviceActivity.this, DeviceActivity.class);
+                startActivity(intent);
+                //Set device name:
+
+                TextView myTextViewName = (TextView) findViewById(R.id.textView_name);
+                myTextViewName.setText(devices.get(position).getName());
+                myTextViewName.setVisibility(View.VISIBLE);
+
+                //Set title.
+                setTitle(devices.get(position).getType().toString());
+
+
+                //If the device is binary type we show the switch.
+                if (devices.get(position).getValueType() == Device.ValueType.BINARY) {
+                    mySwitch = (Switch) findViewById(R.id.switch_value);
+                    if (mySeekBar != null)
+                        mySeekBar.setVisibility(View.GONE);
+                    mySwitch.setVisibility(View.VISIBLE);
+
+                }
+
+                //Else we show the seekbar.
+                else {
+                    mySeekBar = (SeekBar) findViewById(R.id.seekBar_value);
+                    if (mySwitch != null)
+                        mySwitch.setVisibility(View.GONE);
+                    mySeekBar.setVisibility(View.VISIBLE);
+
+                }
             }
         });
-    }
-
-    //Shows the selected device on the screen with the control functions.
-    public void showDevice(Device device) {
-
-
-        //Set device name:
-        TextView myTextViewName = (TextView) findViewById(R.id.textView_name);
-        myTextViewName.setText(device.getName());
-        myTextViewName.setVisibility(View.VISIBLE);
-
-        //Set title.
-        setTitle(device.getType().toString());
-
-
-        //If the device is binary type we show the switch.
-        if(device.getValueType() == Device.ValueType.BINARY) {
-            mySwitch = (Switch) findViewById(R.id.switch_value);
-            if(mySeekBar != null)
-                mySeekBar.setVisibility(View.GONE);
-            mySwitch.setVisibility(View.VISIBLE);
-        }
-
-        //Else we show the seekbar.
-        else {
-            mySeekBar = (SeekBar) findViewById(R.id.seekBar_value);
-            if(mySwitch != null)
-                mySwitch.setVisibility(View.GONE);
-            mySeekBar.setVisibility(View.VISIBLE);
-        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_device, menu);
+        // Display the fragment as the main content.
+
         return true;
     }
 
@@ -141,11 +149,57 @@ public class DeviceActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+
+
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent settingsIntent = new Intent(this, SettingsActivity.class);
+            startActivity(settingsIntent);
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+    public static class SettingsFragment extends PreferenceFragment {
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+
+            // Load the preferences from an XML resource
+            addPreferencesFromResource(R.xml.preferences);
+        }
+    }
+
+    public void showNotification() {
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.abc_edit_text_material)
+                        .setContentTitle("My notification")
+                        .setContentText("Something happened");
+        // Creates an explicit intent for an Activity in your app
+        Intent resultIntent = new Intent(this, DeviceActivity.class);
+
+        // The stack builder object will contain an artificial back stack for the
+// started Activity.
+// This ensures that navigating backward from the Activity leads out of
+// your application to the Home screen.
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+// Adds the back stack for the Intent (but not the Intent itself)
+        stackBuilder.addParentStack(DeviceActivity.class);
+// Adds the Intent that starts the Activity to the top of the stack
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        mBuilder.setContentIntent(resultPendingIntent);
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+// mId allows you to update the notification later on.
+        mNotificationManager.notify(1, mBuilder.build());
+
+    }
+
 }
