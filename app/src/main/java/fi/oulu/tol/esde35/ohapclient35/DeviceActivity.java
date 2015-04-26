@@ -35,15 +35,14 @@ public class DeviceActivity extends ActionBarActivity {
     protected MyCentralUnit centralUnit = null;
     ArrayList<Device> devices;
     protected String EXTRA_PREFIX = "";
+    protected DeviceHolder holder;
+    protected ListView myListView;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device);
-
-
-
 
 
         try {
@@ -55,12 +54,14 @@ public class DeviceActivity extends ActionBarActivity {
             Log.d(TAG, "Something went wrong with the URL: " + except);
         }
 
+        holder = new DeviceHolder();
         //Dummy Device:
         Device device = new Device(centralUnit, 1, Device.Type.ACTUATOR, Device.ValueType.DECIMAL);
         device.setName("Ceiling Lamp");
         //Dummy Device:
         Device device1 = new Device(centralUnit, 2, Device.Type.ACTUATOR, Device.ValueType.BINARY);
         device1.setName("Outdoor lights");
+        device1.setDescription("Lights outside at the pool");
         //Dummy Device:
         Device device2 = new Device(centralUnit, 3, Device.Type.ACTUATOR, Device.ValueType.DECIMAL);
         device2.setName("Sauna lights");
@@ -70,7 +71,12 @@ public class DeviceActivity extends ActionBarActivity {
         devices.add(device1);
         devices.add(device2);
 
-        final ListView myListView = (ListView) findViewById(R.id.ListView);
+        holder.addDevice(device);
+        holder.addDevice(device1);
+        holder.addDevice(device2);
+
+
+        myListView = (ListView) findViewById(R.id.ListView);
         MyListAdapter myAdapter;
         myAdapter = new MyListAdapter(devices);
         myListView.setAdapter(myAdapter);
@@ -98,40 +104,24 @@ public class DeviceActivity extends ActionBarActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(DeviceActivity.this, "Row " + position + " selected", Toast.LENGTH_SHORT).show();
 
-                //Hide the list view.
-                myListView.setVisibility(View.GONE);
-                //Intent intent = new Intent(DeviceActivity.this, DeviceActivity.class);
-                //startActivity(intent);
-                //Set device name:
+                //Set selected device.
+                holder.setSelectedDevice(position);
 
-                TextView myTextViewName = (TextView) findViewById(R.id.textView_name);
-                myTextViewName.setText(devices.get(position).getName());
-                myTextViewName.setVisibility(View.VISIBLE);
-
-                //Set title.
-                setTitle(devices.get(position).getType().toString());
+                //Show the device.
+                Intent intent = new Intent(DeviceActivity.this, MyDeviceView.class);
+                startActivity(intent);
 
 
-                //If the device is binary type we show the switch.
-                if (devices.get(position).getValueType() == Device.ValueType.BINARY) {
-                    mySwitch = (Switch) findViewById(R.id.switch_value);
-                    if (mySeekBar != null)
-                        mySeekBar.setVisibility(View.GONE);
-                    mySwitch.setVisibility(View.VISIBLE);
 
-                }
-
-                //Else we show the seekbar.
-                else {
-                    mySeekBar = (SeekBar) findViewById(R.id.seekBar_value);
-                    if (mySwitch != null)
-                        mySwitch.setVisibility(View.GONE);
-                    mySeekBar.setVisibility(View.VISIBLE);
-
-                }
             }
         });
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -148,7 +138,6 @@ public class DeviceActivity extends ActionBarActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
 
 
         //noinspection SimplifiableIfStatement
