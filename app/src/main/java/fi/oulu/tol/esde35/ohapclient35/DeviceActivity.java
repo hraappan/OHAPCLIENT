@@ -17,7 +17,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.opimobi.ohap.Device;
@@ -34,7 +33,7 @@ public class DeviceActivity extends ActionBarActivity {
     protected SeekBar mySeekBar = null;
     protected MyCentralUnit centralUnit = null;
     ArrayList<Device> devices;
-    protected String EXTRA_PREFIX = "";
+    protected static final String EXTRA_PREFIX = "fi.oulu.tol.esde35.ohapclient35";
     protected DeviceHolder holder;
     protected ListView myListView;
 
@@ -108,7 +107,8 @@ public class DeviceActivity extends ActionBarActivity {
                 holder.setSelectedDevice(position);
 
                 //Show the device.
-                Intent intent = new Intent(DeviceActivity.this, MyDeviceView.class);
+                Intent intent = new Intent(DeviceActivity.this, DeviceView.class);
+                intent.putExtra(EXTRA_PREFIX, "");
                 startActivity(intent);
 
 

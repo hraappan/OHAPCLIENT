@@ -17,17 +17,22 @@ import com.opimobi.ohap.Device;
 /**
  * Created by geldan on 26.4.2015.
  */
-public class MyDeviceView extends ActionBarActivity {
+public class DeviceView extends ActionBarActivity {
 
     protected Switch mySwitch = null;
     protected SeekBar mySeekBar = null;
     protected Device device;
+    protected final static String TAG = "MyDeviceView";
 
     @Override
     protected void onCreate(Bundle b) {
            super.onCreate(b);
            setContentView(R.layout.device_view);
            Device device = DeviceHolder.getSelectedDevice();
+
+        String prefix = getIntent().getStringExtra("EXTRA_PREFIX");
+        Log.d(TAG, "KEKEKEKEKE");
+        Log.d(TAG, ": " + prefix);
 
         //Set title.
         setTitle(device.getType().toString());
