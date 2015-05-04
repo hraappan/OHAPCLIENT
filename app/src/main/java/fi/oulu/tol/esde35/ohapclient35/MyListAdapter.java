@@ -22,6 +22,7 @@ public class MyListAdapter implements ListAdapter {
 
 
     public MyListAdapter(ArrayList<Device> prefix) {
+
         this.prefix = prefix;
     }
     /**
@@ -52,6 +53,7 @@ public class MyListAdapter implements ListAdapter {
     @Override
     public boolean isEnabled(int position)
     {
+
         return true;
     }
 
@@ -159,6 +161,7 @@ public class MyListAdapter implements ListAdapter {
             }
             else viewHolder = (ViewHolder)convertView.getTag();
 
+       //Get the current device name.
        viewHolder.myTextView.setText(prefix.get(position).getName());
 
        return convertView;

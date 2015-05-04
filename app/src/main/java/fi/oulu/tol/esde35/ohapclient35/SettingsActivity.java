@@ -17,6 +17,10 @@ import android.preference.PreferenceFragment;
 
 import fi.oulu.tol.esde35.ohapclient35.R;
 
+
+//Class handles the settings that are used to change URL of the OHAP
+//Service.
+
 public class SettingsActivity extends Activity {
 
     @Override

@@ -3,9 +3,13 @@ package fi.oulu.tol.esde35.ohapclient35;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.Binder;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.preference.PreferenceFragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
@@ -17,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.opimobi.ohap.Device;
@@ -26,62 +31,67 @@ import java.net.URL;
 import java.util.ArrayList;
 
 
-public class DeviceActivity extends ActionBarActivity {
+public class DeviceActivity extends ActionBarActivity implements DeviceObserver {
 
     protected final String TAG = "DeviceActivity";
-    protected Switch mySwitch = null;
-    protected SeekBar mySeekBar = null;
-    protected MyCentralUnit centralUnit = null;
-    ArrayList<Device> devices;
+    protected ListView myListView = null;
     protected static final String EXTRA_PREFIX = "fi.oulu.tol.esde35.ohapclient35";
-    protected DeviceHolder holder;
-    protected ListView myListView;
+    private DeviceService deviceService = null;
 
+    public DeviceActivity() {
+
+    }
+
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+
+        /**
+         * Called when a connection to the Service has been established, with
+         * the {@link android.os.IBinder} of the communication channel to the
+         * Service.
+         *
+         * @param name    The concrete component name of the service that has
+         *                been connected.
+         * @param service The IBinder of the Service's communication channel,
+         */
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            DeviceService.DeviceServiceBinder binder = (DeviceService.DeviceServiceBinder) service;
+            deviceService = ((DeviceService.DeviceServiceBinder) service).getService();
+
+            MyListAdapter myAdapter = null;
+
+            myAdapter = new MyListAdapter(deviceService.getDevices());
+            myListView.setAdapter(myAdapter);
+
+            setListeners();
+
+        }
+
+        /**
+         * Called when a connection to the Service has been lost.  This typically
+         * happens when the process hosting the service has crashed or been killed.
+         * This does <em>not</em> remove the ServiceConnection itself -- this
+         * binding to the service will remain active, and you will receive a call
+         * to {@link #onServiceConnected} when the Service is next running.
+         *
+         * @param name The concrete component name of the service whose
+         *             connection has been lost.
+         */
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            deviceService = null;
+
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device);
-
-
-        try {
-            centralUnit = new MyCentralUnit(new URL("http://ohap.opimobi.com:8080/"));
-            centralUnit.setName("OHAP Test Server");
-
-        } catch (MalformedURLException except) {
-
-            Log.d(TAG, "Something went wrong with the URL: " + except);
-        }
-
-        holder = new DeviceHolder();
-        //Dummy Device:
-        Device device = new Device(centralUnit, 1, Device.Type.ACTUATOR, Device.ValueType.DECIMAL);
-        device.setName("Ceiling Lamp");
-        //Dummy Device:
-        Device device1 = new Device(centralUnit, 2, Device.Type.ACTUATOR, Device.ValueType.BINARY);
-        device1.setName("Outdoor lights");
-        device1.setDescription("Lights outside at the pool");
-        //Dummy Device:
-        Device device2 = new Device(centralUnit, 3, Device.Type.ACTUATOR, Device.ValueType.DECIMAL);
-        device2.setName("Sauna lights");
-        //Add dummy devices in the list.
-        devices = new ArrayList<Device>();
-        devices.add(device);
-        devices.add(device1);
-        devices.add(device2);
-
-        holder.addDevice(device);
-        holder.addDevice(device1);
-        holder.addDevice(device2);
-
-
         myListView = (ListView) findViewById(R.id.ListView);
-        MyListAdapter myAdapter;
-        myAdapter = new MyListAdapter(devices);
-        myListView.setAdapter(myAdapter);
 
-        //Launch notification.
-        showNotification();
+        Intent intent = new Intent(this, DeviceService.class);
+        startService(intent);
 
         //Add listener to the myListView.
         myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -104,24 +114,45 @@ public class DeviceActivity extends ActionBarActivity {
                 Toast.makeText(DeviceActivity.this, "Row " + position + " selected", Toast.LENGTH_SHORT).show();
 
                 //Set selected device.
-                holder.setSelectedDevice(position);
+                deviceService.setSelectedDevice(position);
 
-                //Show the device.
+                //Show device.
                 Intent intent = new Intent(DeviceActivity.this, DeviceView.class);
                 intent.putExtra(EXTRA_PREFIX, "");
                 startActivity(intent);
-
-
-
             }
         });
     }
 
+    public void setListeners() {
+        deviceService.setObserver(this);
+    }
+
     @Override
     protected void onResume() {
+
         super.onResume();
     }
 
+    @Override
+    protected void onStart() {
+
+        super.onStart();
+
+        Intent intent = new Intent (this, DeviceService.class);
+        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(deviceService != null) {
+            unbindService(serviceConnection);
+            deviceService = null;
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -150,6 +181,13 @@ public class DeviceActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void deviceStateChanged() {
+        showNotification();
+    }
+
+
+    //Class for holding the settings.
     public static class SettingsFragment extends PreferenceFragment {
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -160,35 +198,38 @@ public class DeviceActivity extends ActionBarActivity {
         }
     }
 
-    public void showNotification() {
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.abc_edit_text_material)
-                        .setContentTitle("My notification")
-                        .setContentText("Something happened");
-        // Creates an explicit intent for an Activity in your app
-        Intent resultIntent = new Intent(this, DeviceActivity.class);
+        //Show notification on the system.
+        public void showNotification() {
 
-        // The stack builder object will contain an artificial back stack for the
-// started Activity.
-// This ensures that navigating backward from the Activity leads out of
-// your application to the Home screen.
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-// Adds the back stack for the Intent (but not the Intent itself)
-        stackBuilder.addParentStack(DeviceActivity.class);
-// Adds the Intent that starts the Activity to the top of the stack
-        stackBuilder.addNextIntent(resultIntent);
-        PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(
-                        0,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
-        mBuilder.setContentIntent(resultPendingIntent);
-        NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-// mId allows you to update the notification later on.
-        mNotificationManager.notify(1, mBuilder.build());
+            NotificationCompat.Builder mBuilder =
+                    new NotificationCompat.Builder(this)
+                            .setSmallIcon(R.drawable.abc_edit_text_material)
+                            .setContentTitle("My notification")
+                            .setContentText("Something happened");
+            // Creates an explicit intent for an Activity in your app
+            Intent resultIntent = new Intent(this, DeviceActivity.class);
+
+            // The stack builder object will contain an artificial back stack for the
+            // started Activity.
+            // This ensures that navigating backward from the Activity leads out of
+            // your application to the Home screen.
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+            // Adds the back stack for the Intent (but not the Intent itself)
+            stackBuilder.addParentStack(DeviceActivity.class);
+            // Adds the Intent that starts the Activity to the top of the stack
+            stackBuilder.addNextIntent(resultIntent);
+            PendingIntent resultPendingIntent =
+                    stackBuilder.getPendingIntent(
+                            0,
+                            PendingIntent.FLAG_UPDATE_CURRENT
+                    );
+            mBuilder.setContentIntent(resultPendingIntent);
+            NotificationManager mNotificationManager =
+                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            // mId allows you to update the notification later on.
+            mNotificationManager.notify(1, mBuilder.build());
+
+        }
 
     }
 
-}
