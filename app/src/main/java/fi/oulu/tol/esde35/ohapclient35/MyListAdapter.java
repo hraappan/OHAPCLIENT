@@ -13,7 +13,9 @@ import com.opimobi.ohap.Device;
 import java.util.ArrayList;
 
 /**
- * Created by geldan on 13.4.2015.
+ * Created by Hannu Raappana on 13.4.2015.
+ *
+ * Adapter for handling the listview actions.
  */
 public class MyListAdapter implements ListAdapter {
 

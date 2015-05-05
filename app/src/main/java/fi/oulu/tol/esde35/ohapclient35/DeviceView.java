@@ -11,7 +11,9 @@ import android.widget.TextView;
 import com.opimobi.ohap.Device;
 
 /**
- * Created by geldan on 4.5.2015.
+ * Created by Hannu Raappana on 4.5.2015.
+ *
+ * Shows the selected device on the screen.
  */
 
 public class DeviceView extends ActionBarActivity implements DeviceObserver {

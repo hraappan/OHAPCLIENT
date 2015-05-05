@@ -6,11 +6,14 @@ import android.app.Service;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.*;
 import android.os.Process;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.opimobi.ohap.Device;
 import com.opimobi.ohap.EventSource;
@@ -21,7 +24,13 @@ import java.util.ArrayList;
 
 /**
  * Created by Hannu Raappana on 27.4.2015.
- * Service listens changes in the service and informs about them.
+ *
+ * Service is working as interface between the UI and the server.
+ * Includes functions for handling Devices and fetching them from
+ * the Internet. The class builds a thread so it can be run without
+ * interfering the use of the UI.
+ * Service also listens changes in the service and informs about them
+ * to the system.
  *
  */
 public class DeviceService extends Service implements DeviceObserver, DeviceServiceInterface {
@@ -33,8 +42,8 @@ public class DeviceService extends Service implements DeviceObserver, DeviceServ
     private Looper mServiceLooper = null;
     private DeviceServer deviceServer = null;
     private DeviceServiceHandler mServiceHandler = null;
-    private final String EXTRA_PREFIX = "fi.oulu.tol.esde35.ohapclient35.DeviceService";
-    private String TAG = "DeviceService";
+    private final static String EXTRA_PREFIX = "fi.oulu.tol.esde35.ohapclient35.DeviceService";
+    private final static String TAG = "DeviceService";
 
     /**
      * Called by the system when the service is first created.  Do not call this method directly.
@@ -55,6 +64,17 @@ public class DeviceService extends Service implements DeviceObserver, DeviceServ
         mServiceLooper = thread.getLooper();
         mServiceHandler = new DeviceServiceHandler(mServiceLooper);
 
+
+
+    }
+
+    public void updateServerAddress() {
+
+        Log.d(TAG, "Updating server address.");
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String address = prefs.getString("url", "");
+        deviceServer.setServerAddress(address);
+        Toast.makeText(DeviceService.this, "Address is changed.", Toast.LENGTH_SHORT).show();
 
 
     }
@@ -107,8 +127,6 @@ public class DeviceService extends Service implements DeviceObserver, DeviceServ
 
             stopSelf(msg.arg1);
         }
-
-
     }
 
     @Override

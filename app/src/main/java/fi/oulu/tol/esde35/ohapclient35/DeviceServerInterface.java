@@ -4,6 +4,8 @@ import android.content.Context;
 
 /**
  * Created by Hannu Raappana on 30.4.2015.
+ *
+ * Interface for the class handling the network functions.
  */
 public interface DeviceServerInterface {
 

@@ -7,7 +7,9 @@ import com.opimobi.ohap.Device;
 import java.net.URL;
 
 /**
- * Created by geldan on 13.4.2015.
+ * Created by Hannu Raappana on 13.4.2015.
+ *
+ * Implementation of the CentralUnit class.
  */
 public class MyCentralUnit extends CentralUnit {
 

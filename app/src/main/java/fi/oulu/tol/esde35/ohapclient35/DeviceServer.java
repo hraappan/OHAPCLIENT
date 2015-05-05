@@ -10,11 +10,13 @@ import java.util.TimerTask;
 
 /**
  * Created by Hannu Raappana on 30.4.2015.
+ *
+ * Class handles the network functions of the system.
  */
 public class DeviceServer implements DeviceServerInterface {
     private Context c = null;
     private DeviceObserver observer = null;
-    private String TAG = "DeviceServer";
+    private final static String TAG = "DeviceServer";
 
     @Override
     public void initialize(Context c, DeviceObserver observer) {

@@ -30,10 +30,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+/**
+ * Created by Hannu Raappana on 26.4.2015.
+ *
+ * Main class of the program. Builds the listview to show the devices.
+ */
 
 public class DeviceActivity extends ActionBarActivity implements DeviceObserver {
 
-    protected final String TAG = "DeviceActivity";
+    protected final static String TAG = "DeviceActivity";
     protected ListView myListView = null;
     protected static final String EXTRA_PREFIX = "fi.oulu.tol.esde35.ohapclient35";
     private DeviceService deviceService = null;
@@ -132,6 +137,8 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver 
     protected void onResume() {
 
         super.onResume();
+
+
     }
 
     @Override
@@ -170,7 +177,6 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver 
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Intent settingsIntent = new Intent(this, SettingsActivity.class);
@@ -179,6 +185,7 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver 
         }
 
         return super.onOptionsItemSelected(item);
+
     }
 
     @Override
