@@ -22,7 +22,7 @@ import com.opimobi.ohap.Device;
  * Shows the selected device on the screen.
  */
 
-public class DeviceView extends ActionBarActivity implements DeviceObserver {
+public class DeviceView extends ActionBarActivity implements DeviceObserver, DeviceOrientationInterface {
 
     protected Switch mySwitch = null;
     protected SeekBar mySeekBar = null;
@@ -139,5 +139,25 @@ public class DeviceView extends ActionBarActivity implements DeviceObserver {
     @Override
     public void deviceStateChanged() {
         Log.d(TAG, "Device state has changed!");
+    }
+
+    @Override
+    public void tiltedAway() {
+        Log.d(TAG, "Tilted away");
+    }
+
+    @Override
+    public void tiltedTowards() {
+        Log.d(TAG, "Tilted towards");
+    }
+
+    @Override
+    public void tiltedLeft() {
+        Log.d(TAG, "Tilted left");
+    }
+
+    @Override
+    public void tiltedRight() {
+        Log.d(TAG, "Tilted right");
     }
 }
