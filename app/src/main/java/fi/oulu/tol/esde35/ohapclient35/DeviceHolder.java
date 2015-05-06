@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class DeviceHolder {
 
     protected ArrayList<Device> devices;
-    protected static Device selection;
+    protected Device selection;
 
     //Constructor
     public DeviceHolder() {

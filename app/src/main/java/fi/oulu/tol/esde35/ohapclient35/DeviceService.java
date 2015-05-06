@@ -1,5 +1,6 @@
 package fi.oulu.tol.esde35.ohapclient35;
 
+import android.app.Application;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -17,7 +18,10 @@ import android.widget.Toast;
 
 import com.opimobi.ohap.Device;
 import com.opimobi.ohap.EventSource;
+import com.opimobi.ohap.HbdpConnection;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -35,16 +39,17 @@ import java.util.ArrayList;
  */
 public class DeviceService extends Service implements DeviceObserver, DeviceServiceInterface {
 
+    //Variables.
     private final DeviceServiceBinder binder = new DeviceServiceBinder();
+    private DeviceHolder holder = new DeviceHolder();
     private DeviceObserver observer = null;
-    private static DeviceHolder holder = null;
     private MyCentralUnit centralUnit = null;
     private Looper mServiceLooper = null;
     private DeviceServer deviceServer = null;
     private DeviceServiceHandler mServiceHandler = null;
     private final static String EXTRA_PREFIX = "fi.oulu.tol.esde35.ohapclient35.DeviceService";
     private final static String TAG = "DeviceService";
-
+    private URL serverAddress;
     /**
      * Called by the system when the service is first created.  Do not call this method directly.
      */
@@ -56,31 +61,61 @@ public class DeviceService extends Service implements DeviceObserver, DeviceServ
         deviceServer = new DeviceServer();
         deviceServer.initialize(getBaseContext(), this);
 
-        //Create the thread.
-        HandlerThread thread = new HandlerThread("MyArguments", Process.THREAD_PRIORITY_BACKGROUND);
+        //Create the handler for messages.
+        HandlerThread thread = new HandlerThread("DeviceServiceThread", Process.THREAD_PRIORITY_BACKGROUND);
         thread.start();
 
-        //Get the looper for the thread.
+        //Get the message looper.
         mServiceLooper = thread.getLooper();
         mServiceHandler = new DeviceServiceHandler(mServiceLooper);
 
-
-
     }
 
-    public void updateServerAddress() {
-
+    //Method used to update the server address. If the url is malformed false is returned to the caller.
+    public boolean updateServerAddress(String address) {
         Log.d(TAG, "Updating server address.");
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String address = prefs.getString("url", "");
-        deviceServer.setServerAddress(address);
+        URL url = null;
+        try {
+           url = new URL(address);
+        }
+
+        catch(MalformedURLException exception) {
+            Toast.makeText(this, "The url is malformed.", Toast.LENGTH_SHORT).show();
+            return false;
+
+        }
+        this.serverAddress = url;
         Toast.makeText(DeviceService.this, "Address is changed.", Toast.LENGTH_SHORT).show();
-
-
+        return true;
     }
 
-    //Handler for the service to allow multiple threads to be run without
-    //interfering the usage of the UI.
+    //Returns the current server address to the caller.
+    public URL getServerAddress() {
+
+        if(serverAddress != null)
+            return serverAddress;
+        else
+            try {
+
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                String address = prefs.getString("url", "");
+                serverAddress = new URL(address);
+
+                Log.d(TAG, "Address is:" + serverAddress);
+                return serverAddress;
+            }
+            catch(MalformedURLException exception) {
+                Toast.makeText(this, "Something wrong with the URL", Toast.LENGTH_SHORT);
+
+            }
+    return serverAddress;
+    }
+
+    /*
+    * Handler for the service to queue runnables to run in a thread without interfering the UI.
+    *
+    */
+
     private final class DeviceServiceHandler extends Handler {
         public DeviceServiceHandler(Looper looper) {
             super(looper);
@@ -95,16 +130,11 @@ public class DeviceService extends Service implements DeviceObserver, DeviceServ
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
 
-            try {
-                centralUnit = new MyCentralUnit(new URL("http://ohap.opimobi.com:8080/"));
-                centralUnit.setName("OHAP Test Server");
 
-            } catch (MalformedURLException except) {
+            centralUnit = new MyCentralUnit(getServerAddress());
+            centralUnit.setName("OHAP Test Server");
 
-                Log.d(TAG, "Something went wrong with the URL: " + except);
-            }
-
-            holder = new DeviceHolder();
+            /*
             //Dummy Device:
             Device device = new Device(centralUnit, 1, Device.Type.ACTUATOR, Device.ValueType.DECIMAL);
             device.setName("Ceiling Lamp");
@@ -124,8 +154,26 @@ public class DeviceService extends Service implements DeviceObserver, DeviceServ
             Log.d(TAG, "Getting central unit from the server...");
 
             deviceServer.getCentralUnit();
+*/
 
-            stopSelf(msg.arg1);
+            String myString = "keke";
+
+            Log.d(TAG, "Creating connection to: " + getServerAddress());
+
+            if (msg.obj == "retrieve") {
+                //Creaate connection using HBDP.
+                Log.d(TAG, "Retrieving devices.");
+                HbdpConnection myConnection = new HbdpConnection(getServerAddress());
+
+                OutputStream out = myConnection.getOutputStream();
+                try {
+                    out.write(myString.getBytes());
+                } catch (IOException exception) {
+
+                }
+
+                stopSelf();
+            }
         }
     }
 
@@ -155,7 +203,11 @@ public class DeviceService extends Service implements DeviceObserver, DeviceServ
     //Get all devices from the DeviceHolder.
     public ArrayList <Device> getDevices() {
 
-        return holder.getDevices();
+        if(holder != null)
+            return holder.getDevices();
+        else
+            Toast.makeText(this, "There are no devices available.", Toast.LENGTH_SHORT);
+        return null;
     }
 
     //Set the selected device to the DeviceHolder.
@@ -165,7 +217,7 @@ public class DeviceService extends Service implements DeviceObserver, DeviceServ
     }
 
     //Get the selected device from the DeviceHolder.
-    public static Device getSelectedDevice() {
+    public Device getSelectedDevice() {
 
         return holder.getSelectedDevice();
     }
@@ -213,10 +265,8 @@ public class DeviceService extends Service implements DeviceObserver, DeviceServ
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         Message msg = mServiceHandler.obtainMessage();
-        msg.arg1 = startId;
+        msg.obj = "retrieve";
         mServiceHandler.sendMessage(msg);
-
-
 
         return START_STICKY;
     }

@@ -138,7 +138,8 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver 
 
         super.onResume();
 
-
+        Intent intent = new Intent (this, DeviceService.class);
+        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -148,8 +149,6 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver 
 
         Intent intent = new Intent (this, DeviceService.class);
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-
-
     }
 
     @Override
