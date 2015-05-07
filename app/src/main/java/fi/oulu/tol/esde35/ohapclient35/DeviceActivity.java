@@ -17,8 +17,22 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.SeekBar;
+import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.opimobi.ohap.CentralUnit;
+import com.opimobi.ohap.Device;
+import com.opimobi.ohap.Item;
+
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+
+import fi.oulu.tol.esde35.ohap.ConnectionManager;
 
 /**
  * Created by Hannu Raappana on 26.4.2015.
@@ -30,8 +44,18 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver 
 
     protected final static String TAG = "DeviceActivity";
     protected ListView myListView = null;
-    protected static final String EXTRA_PREFIX = "fi.oulu.tol.esde35.ohapclient35";
-    private DeviceService deviceService = null;
+    public static final String EXTRA_CENTRAL_UNIT_URL = "fi.oulu.tol.esde.esde35.CENTRAL_UNIT_URL";
+    public static final String EXTRA_DEVICE_ID = "fi.oulu.tol.esde35.DEVICE_ID";
+    private URL url;
+    private ConnectionManager cm;
+    protected Switch mySwitch = null;
+    protected SeekBar mySeekBar = null;
+    private TextView myTextViewName = null;
+    private TextView deviceDescription = null;
+    private DeviceService deviceService;
+    private Device device;
+    private CentralUnit cu;
+    private Item item;
 
     public DeviceActivity() {
 
@@ -53,10 +77,6 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver 
             DeviceService.DeviceServiceBinder binder = (DeviceService.DeviceServiceBinder) service;
             deviceService = ((DeviceService.DeviceServiceBinder) service).getService();
 
-            MyListAdapter myAdapter = null;
-
-            myAdapter = new MyListAdapter(deviceService.getDevices());
-            myListView.setAdapter(myAdapter);
 
             setListeners();
 
@@ -81,42 +101,97 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_device);
-        myListView = (ListView) findViewById(R.id.ListView);
+        setContentView(R.layout.device_view);
+        myTextViewName = (TextView) findViewById(R.id.textView_name);
+        deviceDescription = (TextView) findViewById(R.id.textView_path);
 
-        Intent intent = new Intent(this, DeviceService.class);
-        startService(intent);
 
-        //Add listener to the myListView.
-        myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        //Get the ConnectionManager instance from the class.
+        cm = ConnectionManager.getInstance();
 
-            /**
-             * Callback method to be invoked when an item in this AdapterView has
-             * been clicked.
-             * <p/>
-             * Implementers can call getItemAtPosition(position) if they need
-             * to access the data associated with the selected item.
-             *
-             * @param parent   The AdapterView where the click happened.
-             * @param view     The view within the AdapterView that was clicked (this
-             *                 will be a view provided by the adapter)
-             * @param position The position of the view in the adapter.
-             * @param id       The row id of the item that was clicked.
-             */
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(DeviceActivity.this, "Row " + position + " selected", Toast.LENGTH_SHORT).show();
+        //Get the intent.
+        Intent intent = getIntent();
 
-                //Set selected device.
-                deviceService.setSelectedDevice(position);
 
-                //Show device.
-                Intent intent = new Intent(DeviceActivity.this, DeviceView.class);
-                intent.putExtra(EXTRA_PREFIX, "");
-                startActivity(intent);
-            }
-        });
+        //Get values from the intents.
+        String address = intent.getStringExtra(EXTRA_CENTRAL_UNIT_URL);
+        long deviceId = intent.getLongExtra(EXTRA_DEVICE_ID, 0);
+
+        Log.d(TAG, "The address is: " + address);
+        Log.d(TAG, "The deviceID is: " + deviceId);
+        //Create URL from the string.
+        try {
+            this.url = new URL(address);
+        }
+
+        catch(MalformedURLException exception) {
+
+        }
+
+        //Get the device id from the string.
+
+        //Get the current central unit.
+        cu = cm.getCentralUnit(url);
+        device = (Device) cu.getItemById(deviceId);
+
+        updateView();
+
+    }
+
+    public void updateView() {
+
+        //Set title.
+        setTitle(device.getType().toString());
+
+        myTextViewName.setText(device.getName());
+        myTextViewName.setVisibility(View.VISIBLE);
+
+        deviceDescription.setText(device.getDescription());
+        deviceDescription.setVisibility(View.VISIBLE);
+
+        //If the device is binary type we show the switch.
+        if (device.getValueType() == Device.ValueType.BINARY) {
+            Log.d(TAG, "Binary type selected:");
+            mySwitch = (Switch) findViewById(R.id.switch_value);
+            mySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    Log.d(TAG, "Switch is checked: " + isChecked);
+                }
+            });
+
+            if (mySeekBar != null)
+                mySeekBar.setVisibility(View.GONE);
+            mySwitch.setVisibility(View.VISIBLE);
+
+        }
+
+        //Else we show the seekbar.
+        else {
+            Log.d(TAG, "Decimal type selected:");
+            mySeekBar = (SeekBar) findViewById(R.id.seekBar_value);
+            mySeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    Log.d(TAG, "Seekbar progress: " + progress);
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+
+                }
+            });
+            if (mySwitch != null)
+                mySwitch.setVisibility(View.GONE);
+            mySeekBar.setVisibility(View.VISIBLE);
+
+        }
     }
 
     public void setListeners() {
