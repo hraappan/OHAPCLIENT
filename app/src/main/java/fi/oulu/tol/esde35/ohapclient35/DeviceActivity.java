@@ -7,6 +7,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceFragment;
@@ -16,7 +17,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.SeekBar;
@@ -29,6 +29,7 @@ import com.opimobi.ohap.Device;
 import com.opimobi.ohap.Item;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
@@ -37,10 +38,10 @@ import fi.oulu.tol.esde35.ohap.ConnectionManager;
 /**
  * Created by Hannu Raappana on 26.4.2015.
  *
- * Main class of the program. Builds the listview to show the devices.
+ * DeviceActicity is made to show the selected device from a Container.
  */
 
-public class DeviceActivity extends ActionBarActivity implements DeviceObserver {
+public class DeviceActivity extends ActionBarActivity implements DeviceObserver, DeviceOrientationInterface {
 
     protected final static String TAG = "DeviceActivity";
     protected ListView myListView = null;
@@ -55,8 +56,7 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver 
     private DeviceService deviceService;
     private Device device;
     private CentralUnit cu;
-    private Item item;
-
+    private URL address;
     public DeviceActivity() {
 
     }
@@ -114,24 +114,14 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver 
         //Get the intent.
         Intent intent = getIntent();
 
-
         //Get values from the intents.
-        String address = intent.getStringExtra(EXTRA_CENTRAL_UNIT_URL);
-        long deviceId = intent.getLongExtra(EXTRA_DEVICE_ID, 0);
+        Bundle bundle = intent.getExtras();
 
-        Log.d(TAG, "The address is: " + address);
+        long deviceId = bundle.getLong(EXTRA_DEVICE_ID, 0);
+        URL url = (URL) bundle.get(EXTRA_CENTRAL_UNIT_URL);
+
+        Log.d(TAG, "The address is: " + bundle.get((String)EXTRA_CENTRAL_UNIT_URL));
         Log.d(TAG, "The deviceID is: " + deviceId);
-        //Create URL from the string.
-        try {
-            this.url = new URL(address);
-        }
-
-        catch(MalformedURLException exception) {
-
-        }
-
-        //Get the device id from the string.
-
         //Get the current central unit.
         cu = cm.getCentralUnit(url);
         device = (Device) cu.getItemById(deviceId);
@@ -255,6 +245,26 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver 
     @Override
     public void deviceStateChanged() {
         showNotification();
+    }
+
+    @Override
+    public void tiltedAway() {
+
+    }
+
+    @Override
+    public void tiltedTowards() {
+
+    }
+
+    @Override
+    public void tiltedLeft() {
+
+    }
+
+    @Override
+    public void tiltedRight() {
+
     }
 
 
