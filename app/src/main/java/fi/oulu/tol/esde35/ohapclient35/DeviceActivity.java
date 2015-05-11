@@ -137,6 +137,9 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
         cu = cm.getCentralUnit(url);
         device = (Device) cu.getItemById(deviceId);
 
+        Intent serviceIntent = new Intent(this, DeviceService.class);
+        startService(serviceIntent);
+
         updateView();
 
     }

@@ -53,6 +53,7 @@ public class DeviceService extends Service implements DeviceObserver, DeviceServ
      */
     @Override
     public void onCreate() {
+
         super.onCreate();
 
         //Create and initialize a DeviceServer for fetching the data over the Internet.
@@ -140,22 +141,23 @@ public class DeviceService extends Service implements DeviceObserver, DeviceServ
                     String myString = "keke";
                     out.write(myString.getBytes());
                 } catch (IOException exception) {
+                    Log.d(TAG, "There was something wrong with the connection." + exception);
 
                 }
 
-                String kekestring = "";
+                int kekestring;
 
                 InputStream in = myConnection.getInputStream();
-                for(int i=0; i<10; i++) {
 
-                    try  {
-                    if(in.read() != -1) {
-                        kekestring = in.toString();
-                        Log.d(TAG, "the char is: " +kekestring);
-                    }}
-                    catch(IOException e) {
-
+                try {
+                    while(true) {
+                        kekestring = (in.read());
+                        Log.d(TAG, "the char is: " + Character.toString((char)kekestring));
                     }
+                }
+                catch(IOException exception) {
+                    Log.d(TAG, "Couldn't retrieve the answer from the server." + exception);
+
                 }
 
                 stopSelf();
