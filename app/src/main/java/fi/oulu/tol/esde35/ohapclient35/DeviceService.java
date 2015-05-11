@@ -1,26 +1,24 @@
 package fi.oulu.tol.esde35.ohapclient35;
 
-import android.app.Application;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
-import android.app.TaskStackBuilder;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.*;
+import android.os.Binder;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.IBinder;
+import android.os.Looper;
+import android.os.Message;
 import android.os.Process;
 import android.preference.PreferenceManager;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.opimobi.ohap.Device;
-import com.opimobi.ohap.EventSource;
 import com.opimobi.ohap.HbdpConnection;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -131,45 +129,33 @@ public class DeviceService extends Service implements DeviceObserver, DeviceServ
             super.handleMessage(msg);
 
 
-            centralUnit = new MyCentralUnit(getServerAddress());
-            centralUnit.setName("OHAP Test Server");
-
-            /*
-            //Dummy Device:
-            Device device = new Device(centralUnit, 1, Device.Type.ACTUATOR, Device.ValueType.DECIMAL);
-            device.setName("Ceiling Lamp");
-            //Dummy Device:
-            Device device1 = new Device(centralUnit, 2, Device.Type.ACTUATOR, Device.ValueType.BINARY);
-            device1.setName("Outdoor lights");
-            device1.setDescription("Lights outside at the pool");
-            //Dummy Device:
-            Device device2 = new Device(centralUnit, 3, Device.Type.ACTUATOR, Device.ValueType.DECIMAL);
-            device2.setName("Sauna lights");
-            //Add dummy devices in the list.
-
-            holder.addDevice(device);
-            holder.addDevice(device1);
-            holder.addDevice(device2);
-
-            Log.d(TAG, "Getting central unit from the server...");
-
-            deviceServer.getCentralUnit();
-*/
-
-            String myString = "keke";
-
             Log.d(TAG, "Creating connection to: " + getServerAddress());
 
             if (msg.obj == "retrieve") {
                 //Creaate connection using HBDP.
                 Log.d(TAG, "Retrieving devices.");
                 HbdpConnection myConnection = new HbdpConnection(getServerAddress());
-
                 OutputStream out = myConnection.getOutputStream();
                 try {
+                    String myString = "keke";
                     out.write(myString.getBytes());
                 } catch (IOException exception) {
 
+                }
+
+                String kekestring = "";
+
+                InputStream in = myConnection.getInputStream();
+                for(int i=0; i<10; i++) {
+
+                    try  {
+                    if(in.read() != -1) {
+                        kekestring = in.toString();
+                        Log.d(TAG, "the char is: " +kekestring);
+                    }}
+                    catch(IOException e) {
+
+                    }
                 }
 
                 stopSelf();

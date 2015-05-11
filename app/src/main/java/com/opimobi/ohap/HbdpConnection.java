@@ -16,7 +16,7 @@ import java.util.Arrays;
  * HTTP Bidirectional Protocol connection.
  *
  * @author Henrik Hedberg <henrik.hedberg@iki.fi>
- * @version 1.1 (20150504)
+ * @version 1.2 (20150506)
  */
 public class HbdpConnection {
 	private URL url;
@@ -200,7 +200,14 @@ public class HbdpConnection {
 			}
 
 			int give = length < readable ? length : readable;
-			System.arraycopy(bytes, position, b, offset, give);
+			if (position + give <= bytes.length ) {
+				System.arraycopy(bytes, position, b, offset, give);
+			} else {
+				int chunk = bytes.length - position;
+				System.arraycopy(bytes, position, b, offset, chunk);
+				System.arraycopy(bytes, 0, b, offset + chunk, give - chunk);
+			}
+			position = (position + give) % bytes.length;
 			readable -= give;
 
 			return give;

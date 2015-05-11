@@ -39,6 +39,7 @@ public class CentralUnitConnection extends CentralUnit {
         super(url);
             //Dummy Device:
             Device device = new Device(this, 1, Device.Type.ACTUATOR, Device.ValueType.DECIMAL);
+            device.changeDecimalValue(40);
             device.setName("Ceiling Lamp");
             //Dummy Device:
             Device device1 = new Device(this, 2, Device.Type.ACTUATOR, Device.ValueType.BINARY);

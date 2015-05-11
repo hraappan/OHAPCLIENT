@@ -7,6 +7,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -57,6 +59,9 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
     private Device device;
     private CentralUnit cu;
     private URL address;
+    private SensorManager sManager;
+    private DeviceOrientationHandler mHandler;
+    private Sensor sensor;
     public DeviceActivity() {
 
     }
@@ -103,6 +108,12 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
+        sManager = (SensorManager) this.getSystemService(SENSOR_SERVICE);
+        sensor = sManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mHandler = new DeviceOrientationHandler(this);
+        sManager.registerListener(mHandler, sensor, SensorManager.SENSOR_DELAY_UI);
+
         setContentView(R.layout.device_view);
         myTextViewName = (TextView) findViewById(R.id.textView_name);
         deviceDescription = (TextView) findViewById(R.id.textView_path);
@@ -130,6 +141,15 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
 
     }
 
+    /**
+     * Dispatch onPause() to fragments.
+     */
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sManager.unregisterListener(mHandler);
+    }
+
     public void updateView() {
 
         //Set title.
@@ -145,9 +165,12 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
         if (device.getValueType() == Device.ValueType.BINARY) {
             Log.d(TAG, "Binary type selected:");
             mySwitch = (Switch) findViewById(R.id.switch_value);
+            mySwitch.setChecked(device.getBinaryValue());
+            Log.d(TAG, "The device is on: " + device.getBinaryValue());
             mySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     Log.d(TAG, "Switch is checked: " + isChecked);
+                    device.setBinaryValue(isChecked);
                 }
             });
 
@@ -161,6 +184,7 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
         else {
             Log.d(TAG, "Decimal type selected:");
             mySeekBar = (SeekBar) findViewById(R.id.seekBar_value);
+            mySeekBar.setElevation((float)device.getDecimalValue());
             mySeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -185,6 +209,7 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
     }
 
     public void setListeners() {
+
         deviceService.setObserver(this);
     }
 
@@ -193,6 +218,7 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
 
         super.onResume();
 
+        sManager.registerListener(mHandler, sensor, SensorManager.SENSOR_DELAY_UI);
         Intent intent = new Intent (this, DeviceService.class);
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
@@ -213,6 +239,8 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
             unbindService(serviceConnection);
             deviceService = null;
         }
+
+        sManager.unregisterListener(mHandler);
     }
 
     @Override
@@ -249,22 +277,40 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
 
     @Override
     public void tiltedAway() {
-
+        Log.d(TAG, "The phone is tilted away.");
     }
 
     @Override
     public void tiltedTowards() {
-
+        Log.d(TAG, "The phone is tilted towards.");
     }
 
     @Override
     public void tiltedLeft() {
-
+        Log.d(TAG, "The phone is tilted left.");
     }
 
     @Override
     public void tiltedRight() {
+        Log.d(TAG, "The phone is tilted right.");
 
+    }
+    @Override
+    public void faceDown() {
+        Log.d(TAG, "The phone is upside-down.");
+        if(device.getValueType() == Device.ValueType.BINARY)
+            device.changeBinaryValue(false);
+            Log.d(TAG, "The device is now: " + device.getBinaryValue());
+            updateView();
+    }
+
+    @Override
+    public void faceUp() {
+        Log.d(TAG, "The phone is facing up.");
+            if(device.getValueType() == Device.ValueType.BINARY)
+                device.changeBinaryValue(true);
+                Log.d(TAG, "The device is now: " + device.getBinaryValue());
+                updateView();
     }
 
 
