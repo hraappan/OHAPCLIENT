@@ -17,9 +17,9 @@ import java.util.HashMap;
  * @see com.opimobi.ohap.Container
  *
  * @author Henrik hedberg &lt;henrik.hedberg@iki.fi>
- * @version 1.2
+ * @version 1.3
  */
-public abstract class   CentralUnit extends Container {
+public abstract class CentralUnit extends Container {
 
     /**
      * A map containing the items of the container. The unique identifiers of the items
@@ -53,6 +53,7 @@ public abstract class   CentralUnit extends Container {
      */
     public CentralUnit(URL url) {
         this.url = url;
+        register(this);
     }
 
     /**

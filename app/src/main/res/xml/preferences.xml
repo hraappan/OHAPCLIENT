@@ -8,6 +8,6 @@
         <EditTextPreference
             android:key="url"
             android:title="OHAP Server Address:"
-            android:defaultValue="@string/preferences"></EditTextPreference>
+            android:defaultValue="@string/preferences">http://ohap.opimobi.com:8080/</EditTextPreference>
     </PreferenceCategory>
 </PreferenceScreen>

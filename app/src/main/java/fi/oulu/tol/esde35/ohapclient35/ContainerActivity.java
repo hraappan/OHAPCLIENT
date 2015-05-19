@@ -30,10 +30,9 @@ public class ContainerActivity extends ActionBarActivity {
     public final static String EXTRA_CENTRAL_UNIT_URL = "fi.oulu.tol.esde35.CENTRAL_UNIT_URL";
     public final static String EXTRA_CONTAINER_ID = "fi.oulu.tol.esde35.CONTAINER_ID";
     private final static String TAG = "ContainerActivity";
-    private Container container;
     private URL url;
     private long containerID;
-    private Item item;
+    private CentralUnit unit;
     private ConnectionManager cm = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,12 +52,15 @@ public class ContainerActivity extends ActionBarActivity {
             url = (URL) bundle.get(EXTRA_CENTRAL_UNIT_URL);
         }
 
-       //try the use the address from the intent.
         if(url == null) {
             //take the address from the preferences.
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            Log.d(TAG, "The preferences are: " + prefs);
             try {
-                url = new URL(prefs.getString("url", ""));
+
+                Log.d(TAG, "The urlstring is:" + prefs.getString("url", "http://ohap.opimobi.com:18000"));
+                url = new URL(prefs.getString("url", "http://ohap.opimobi.com:18000"));
+
             } catch (MalformedURLException exception) {
                 Toast.makeText(this, "Malformed URL in the preferences.", Toast.LENGTH_SHORT).show();
 
@@ -66,18 +68,21 @@ public class ContainerActivity extends ActionBarActivity {
         }
 
         //if the container id is null we use the centralunit as a container.
-        if(containerID != 0) {
-            item = cm.getCentralUnit(url).getItemById(containerID);
+        if(containerID == 0) {
+            Log.d(TAG, "Using centralunit as a container.");
+            unit = cm.getCentralUnit(url);
         }
 
         //else we get the specific container from the connectionmanager.
         else {
-            item = cm.getCentralUnit(url);
+            Log.d(TAG, "Taking the unit from the manager.");
+            unit = (CentralUnit) cm.getCentralUnit(url).getItemById(containerID);
         }
-        Log.d(TAG, "The container has: " + item.getCentralUnit().getItemCount() + "items.");
+        Log.d(TAG, "The container has: " + unit.getCentralUnit().getItemCount() + "items.");
 
+        unit.startListening();
 
-        ContainerListAdapter myAdapter = new ContainerListAdapter((Container)item);
+        ContainerListAdapter myAdapter = new ContainerListAdapter(unit);
         myListView.setAdapter(myAdapter);
 
         //Add listener to the myListView.

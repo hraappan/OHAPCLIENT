@@ -33,8 +33,8 @@ public class ConnectionManager
     }
 
     public static ConnectionManager getInstance() {
+        Log.d(TAG, "Getting connection manager.");
         if(cm == null)
-            Log.d(TAG, "Creating connection manager.");
             cm  = new ConnectionManager();
 
         return cm;

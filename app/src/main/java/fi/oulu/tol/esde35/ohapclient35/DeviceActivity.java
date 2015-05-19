@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -131,7 +132,7 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
         long deviceId = bundle.getLong(EXTRA_DEVICE_ID, 0);
         URL url = (URL) bundle.get(EXTRA_CENTRAL_UNIT_URL);
 
-        Log.d(TAG, "The address is: " + bundle.get((String)EXTRA_CENTRAL_UNIT_URL));
+        Log.d(TAG, "The address is: " + bundle.get(EXTRA_CENTRAL_UNIT_URL));
         Log.d(TAG, "The deviceID is: " + deviceId);
         //Get the current central unit.
         cu = cm.getCentralUnit(url);
@@ -186,12 +187,19 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
         //Else we show the seekbar.
         else {
             Log.d(TAG, "Decimal type selected:");
+            final EditText editText = (EditText) findViewById(R.id.editText_value);
+            editText.setText(Integer.toString((int) device.getDecimalValue()));
+            editText.setVisibility(View.VISIBLE);
             mySeekBar = (SeekBar) findViewById(R.id.seekBar_value);
-            mySeekBar.setElevation((float)device.getDecimalValue());
+
+
+            mySeekBar.setProgress((int)device.getDecimalValue());
             mySeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                     Log.d(TAG, "Seekbar progress: " + progress);
+                    device.setDecimalValue(seekBar.getProgress());
+                    editText.setText(progress);
                 }
 
                 @Override

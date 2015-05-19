@@ -1,6 +1,7 @@
 package fi.oulu.tol.esde35.ohapclient35;
 
 import android.content.Context;
+import android.database.DataSetObservable;
 import android.database.DataSetObserver;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +12,8 @@ import android.widget.TextView;
 
 import com.opimobi.ohap.Container;
 import com.opimobi.ohap.Device;
+import com.opimobi.ohap.EventSource;
+import com.opimobi.ohap.Item;
 
 import java.util.ArrayList;
 
@@ -21,15 +24,36 @@ import fi.oulu.tol.esde35.ohapclient35.R;
  *
  * Adapter for handling the listview actions.
  */
-public class ContainerListAdapter implements ListAdapter {
+public class ContainerListAdapter implements ListAdapter, EventSource.Listener {
 
     private final String TAG = ".MyListAdapter";
+    private DataSetObservable observable = new DataSetObservable();
     private Container container;
 
 
     public ContainerListAdapter(Container container) {
         this.container = container;
-        Log.d(TAG, "The container is: " + container);
+        Log.d(TAG, "The container in adapter is: " + container.getName());
+
+
+        container.itemAddedEventSource.addListener(new EventSource.Listener<Container, Item>() {
+
+            @Override
+            public void onEvent(Container container, Item item) {
+                Log.d(TAG, "The container in the adapter is: " + container);
+
+            }
+        });
+
+        container.itemRemovedEventSource.addListener(new EventSource.Listener<Container, Item>() {
+            @Override
+            public void onEvent(Container container, Item item) {
+                Log.d(TAG, "The container in the adapter is: " + container);
+
+            }
+        });
+
+
     }
     /**
      * Indicates whether all the items in this adapter are enabled. If the
@@ -70,7 +94,7 @@ public class ContainerListAdapter implements ListAdapter {
      */
     @Override
     public void registerDataSetObserver(DataSetObserver observer) {
-
+        observable.registerObserver(observer);
     }
 
     /**
@@ -81,6 +105,7 @@ public class ContainerListAdapter implements ListAdapter {
      */
     @Override
     public void unregisterDataSetObserver(DataSetObserver observer) {
+        observable.unregisterObserver(observer);
 
     }
 
@@ -175,6 +200,19 @@ public class ContainerListAdapter implements ListAdapter {
        viewHolder.myTextView.setText(container.getItemByIndex(position).getName());
 
        return convertView;
+    }
+
+    /**
+     * Handles an event.
+     *
+     * @param o  The instance of the aggregating class.
+     * @param o2 The event data. Implementation may left this null.
+     */
+    @Override
+    public void onEvent(Object o, Object o2) {
+        Log.d(TAG, "the object o: " + o + "and the object o2: " + o2);
+        observable.notifyChanged();
+
     }
 
     //ViewHolder to keep the rubber stamps of views.

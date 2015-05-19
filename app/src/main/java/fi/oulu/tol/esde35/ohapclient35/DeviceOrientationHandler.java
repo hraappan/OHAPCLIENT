@@ -61,22 +61,22 @@ public class DeviceOrientationHandler implements SensorEventListener {
         gravity[2] = alpha * gravity[2] + (1 - alpha) * event.values[2];
 
         if (gravity[0] > 3) {
-            Log.d(TAG, "Tilting left");
+
             doi.tiltedLeft();
             currentDelay = SUBSEQUENT_RECOGNITION_DELAY;
         }
             else if (gravity[0] < -3) {
-                Log.d(TAG, "Tilting right");
+
                 doi.tiltedRight();
                 currentDelay = SUBSEQUENT_RECOGNITION_DELAY;
         }
             else if (gravity[1] > 3) {
-                Log.d(TAG, "Tilting towards");
+
                 doi.tiltedTowards();
                 currentDelay = SUBSEQUENT_RECOGNITION_DELAY;
         }
             else if (gravity[1] < -1.5) {
-                Log.d(TAG, "Tilting away");
+
                 doi.tiltedAway();
                 currentDelay = SUBSEQUENT_RECOGNITION_DELAY;
         }

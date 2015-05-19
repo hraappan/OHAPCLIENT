@@ -39,11 +39,9 @@ public class DeviceService extends Service implements DeviceObserver, DeviceServ
 
     //Variables.
     private final DeviceServiceBinder binder = new DeviceServiceBinder();
-    private DeviceHolder holder = new DeviceHolder();
     private DeviceObserver observer = null;
     private MyCentralUnit centralUnit = null;
     private Looper mServiceLooper = null;
-    private DeviceServer deviceServer = null;
     private DeviceServiceHandler mServiceHandler = null;
     private final static String EXTRA_PREFIX = "fi.oulu.tol.esde35.ohapclient35.DeviceService";
     private final static String TAG = "DeviceService";
@@ -56,17 +54,13 @@ public class DeviceService extends Service implements DeviceObserver, DeviceServ
 
         super.onCreate();
 
-        //Create and initialize a DeviceServer for fetching the data over the Internet.
-        deviceServer = new DeviceServer();
-        deviceServer.initialize(getBaseContext(), this);
-
         //Create the handler for messages.
         HandlerThread thread = new HandlerThread("DeviceServiceThread", Process.THREAD_PRIORITY_BACKGROUND);
-        thread.start();
+        //thread.start();
 
         //Get the message looper.
-        mServiceLooper = thread.getLooper();
-        mServiceHandler = new DeviceServiceHandler(mServiceLooper);
+        //mServiceLooper = thread.getLooper();
+        //mServiceHandler = new DeviceServiceHandler(mServiceLooper);
 
     }
 
@@ -116,6 +110,7 @@ public class DeviceService extends Service implements DeviceObserver, DeviceServ
     */
 
     private final class DeviceServiceHandler extends Handler {
+
         public DeviceServiceHandler(Looper looper) {
             super(looper);
         }
@@ -188,28 +183,6 @@ public class DeviceService extends Service implements DeviceObserver, DeviceServ
 
     }
 
-    //Get all devices from the DeviceHolder.
-    public ArrayList <Device> getDevices() {
-
-        if(holder != null)
-            return holder.getDevices();
-        else
-            Toast.makeText(this, "There are no devices available.", Toast.LENGTH_SHORT);
-        return null;
-    }
-
-    //Set the selected device to the DeviceHolder.
-    public void setSelectedDevice(int index) {
-
-        holder.setSelectedDevice(index);
-    }
-
-    //Get the selected device from the DeviceHolder.
-    public Device getSelectedDevice() {
-
-        return holder.getSelectedDevice();
-    }
-
 
     /**
      * Called by the system every time a client explicitly starts the service by calling
@@ -252,9 +225,9 @@ public class DeviceService extends Service implements DeviceObserver, DeviceServ
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        Message msg = mServiceHandler.obtainMessage();
-        msg.obj = "retrieve";
-        mServiceHandler.sendMessage(msg);
+       // Message msg = mServiceHandler.obtainMessage();
+       // msg.obj = "retrieve";
+       // mServiceHandler.sendMessage(msg);
 
         return START_STICKY;
     }
