@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceFragment;
@@ -29,11 +28,7 @@ import android.widget.Toast;
 
 import com.opimobi.ohap.CentralUnit;
 import com.opimobi.ohap.Device;
-import com.opimobi.ohap.Item;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 
 import fi.oulu.tol.esde35.ohap.ConnectionManager;
@@ -233,8 +228,12 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
             Log.d(TAG, "The device was sensor.");
             mySwitch.setVisibility(View.GONE);
             mySeekBar.setVisibility(View.GONE);
-            final EditText editText = (EditText) findViewById(R.id.editText_value);
-            editText.setText(Double.toString(device.getDecimalValue()));
+            EditText editText = (EditText) findViewById(R.id.editText_value);
+            Log.d(TAG, "the value is: " + device.getDecimalValue());
+            editText.setText(String.valueOf(device.getDecimalValue()) + " " + device.getUnitAbbreviation());
+            editText.setVisibility(View.VISIBLE);
+            editText.setEnabled(false);
+
 
         }
     }

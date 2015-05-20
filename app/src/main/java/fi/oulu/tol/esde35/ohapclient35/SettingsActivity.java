@@ -1,40 +1,17 @@
 package fi.oulu.tol.esde35.ohapclient35;
 
 import android.app.Activity;
-import android.app.ActionBar;
-import android.app.Application;
-import android.app.Fragment;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
-import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.Messenger;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceFragment;
-import android.widget.Toast;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.logging.Handler;
-
-import javax.xml.datatype.Duration;
-
-import fi.oulu.tol.esde35.ohapclient35.R;
 
 /**
  * Created by Hannu Raappana on 26.4.2015.

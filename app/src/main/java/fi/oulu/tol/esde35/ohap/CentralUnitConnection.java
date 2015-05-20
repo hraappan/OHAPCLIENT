@@ -1,7 +1,9 @@
 package fi.oulu.tol.esde35.ohap;
 
-import android.app.usage.UsageEvents;
+import android.content.ComponentName;
+import android.content.ServiceConnection;
 import android.os.*;
+import android.os.Process;
 import android.util.Log;
 
 import com.opimobi.ohap.CentralUnit;
@@ -13,10 +15,9 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 
-import fi.oulu.tol.esde35.ohapclient35.MyCentralUnit;
+import fi.oulu.tol.esde35.ohapclient35.DeviceService;
 
 /**
  * Created by Hannu Raappana on 6.5.2015.
@@ -27,13 +28,12 @@ public class CentralUnitConnection extends CentralUnit {
     private InputStream inputStream;
     private OutputStream outputStream;
     private HbdpConnection connection;
+    private DeviceService deviceService;
     private ConnectionManager cm;
     private Thread thread;
 
 
     private int nListeners;
-
-
 
     private void startNetworking() {
         Log.d(TAG, "Start networking. Connecting to;: " + getURL());
@@ -50,20 +50,17 @@ public class CentralUnitConnection extends CentralUnit {
                 .writeTo(outputStream);
 
 
-
-
          thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-
-
                     Handler handler = new Handler(Looper.getMainLooper());
                     while (true) {
                         Log.d(TAG, "Start the handler.");
                         IncomingMessage incomingMessage = new IncomingMessage();
                         incomingMessage.readFrom(inputStream);
                         handler.post(new IncomingMessageHandler(incomingMessage));
+
                     }
                 } catch (EOFException e) {
                     Log.d(TAG, "Networking stopped.");
@@ -74,6 +71,9 @@ public class CentralUnitConnection extends CentralUnit {
         });
 
 thread.start();
+
+
+
     }
 
     //Handler for the incoming messages.
@@ -96,7 +96,7 @@ thread.start();
         private CentralUnitConnection connection;
 
         public IncomingMessageHandler(IncomingMessage incomingMessage) {
- this.incomingMessage = incomingMessage;
+            this.incomingMessage = incomingMessage;
             Log.d(TAG, "Creating new handler for the message.");
 
         }
@@ -111,7 +111,7 @@ thread.start();
         public void run() {
 
 
-           int messageType = incomingMessage.integer8();
+            int messageType = incomingMessage.integer8();
             Log.d(TAG, "The incoming message is type: " + messageType);
 
             switch (messageType) {
@@ -134,6 +134,7 @@ thread.start();
                     Log.d(TAG, "The idetifier is: " + identifier);
                     dataValue = incomingMessage.decimal64();
                     Log.d(TAG, "The datavalue is:" + dataValue);
+
                     itemDataParentIdentifier = incomingMessage.integer32();
                     Log.d(TAG, "The parent identifier is: " + itemDataParentIdentifier);
                     itemDataName = incomingMessage.text();
@@ -159,6 +160,7 @@ thread.start();
                     device.setMinMaxValues(min, max);
                     device.setUnit(unit, abbreviations);
                     device.setName(itemDataName);
+                    device.setDecimalValue(dataValue);
                     device.setDescription(itemDataDescription);
                     device.setLocation((int) itemDataX, (int) itemDataY, (int) itemDataZ);
                     device.setInternal(itemDataInternal);
@@ -226,24 +228,24 @@ thread.start();
                     identifier = incomingMessage.integer32();
                     Log.d(TAG, "The binary device identifier is: " + identifier);
 
-                        binaryValue = incomingMessage.binary8();
-                        Log.d(TAG, "The binary value of the device is: " + binaryValue);
-                        itemDataParentIdentifier = incomingMessage.integer32();
-                        Log.d(TAG, "The parent identifier is: " + itemDataParentIdentifier);
-                        itemDataName = incomingMessage.text();
-                        Log.d(TAG, "The name of the device is: " + itemDataName);
-                        itemDataDescription = incomingMessage.text();
-                        Log.d(TAG, "The description of the device: " + itemDataDescription);
-                        itemDataInternal = incomingMessage.binary8();
-                        Log.d(TAG, "The item data is: " + itemDataInternal);
-                        itemDataX = incomingMessage.decimal64();
-                        Log.d(TAG, "X is: " + itemDataX);
-                        itemDataY = incomingMessage.decimal64();
-                        Log.d(TAG, "Y is: " + itemDataY);
-                        itemDataZ = incomingMessage.decimal64();
-                        Log.d(TAG, "Z is: " + itemDataZ);
-                        connection = (CentralUnitConnection) cm.getCentralUnit(getURL());
-                        Log.d(TAG, "The parent is: " + connection.getName());
+                    binaryValue = incomingMessage.binary8();
+                    Log.d(TAG, "The binary value of the device is: " + binaryValue);
+                    itemDataParentIdentifier = incomingMessage.integer32();
+                    Log.d(TAG, "The parent identifier is: " + itemDataParentIdentifier);
+                    itemDataName = incomingMessage.text();
+                    Log.d(TAG, "The name of the device is: " + itemDataName);
+                    itemDataDescription = incomingMessage.text();
+                    Log.d(TAG, "The description of the device: " + itemDataDescription);
+                    itemDataInternal = incomingMessage.binary8();
+                    Log.d(TAG, "The item data is: " + itemDataInternal);
+                    itemDataX = incomingMessage.decimal64();
+                    Log.d(TAG, "X is: " + itemDataX);
+                    itemDataY = incomingMessage.decimal64();
+                    Log.d(TAG, "Y is: " + itemDataY);
+                    itemDataZ = incomingMessage.decimal64();
+                    Log.d(TAG, "Z is: " + itemDataZ);
+                    connection = (CentralUnitConnection) cm.getCentralUnit(getURL());
+                    Log.d(TAG, "The parent is: " + connection.getName());
                     try {
                         device = new Device(connection, identifier, Device.Type.ACTUATOR, Device.ValueType.BINARY);
                         device.setName(itemDataName);
@@ -254,7 +256,7 @@ thread.start();
                     }catch(IllegalArgumentException exception) {
                         Log.d(TAG, "There already is a device with same id.");
                     }
-                        itemAddedEventSource.fireEvent(device);
+                    itemAddedEventSource.fireEvent(device);
 
 
                     break;
@@ -293,21 +295,21 @@ thread.start();
 
 
 
-                        Log.d(TAG, "Creating container.");
-                        itemDataParentIdentifier = incomingMessage.integer32();
-                        Log.d(TAG, "The parent identifier is: " + itemDataParentIdentifier);
-                        itemDataName = incomingMessage.text();
-                        Log.d(TAG, "The container is: " + itemDataName);
-                        itemDataDescription = incomingMessage.text();
-                        Log.d(TAG, "The item description is: " + itemDataDescription);
-                        itemDataInternal = incomingMessage.binary8();
-                        Log.d(TAG, "DataInternal is: " + itemDataInternal);
-                        itemDataX = incomingMessage.decimal64();
-                        Log.d(TAG, "X is: " + itemDataX);
-                        itemDataY = incomingMessage.decimal64();
-                        Log.d(TAG, "Y is: " + itemDataY);
-                        itemDataZ = incomingMessage.decimal64();
-                        Log.d(TAG, "Z is: " + itemDataZ);
+                    Log.d(TAG, "Creating container.");
+                    itemDataParentIdentifier = incomingMessage.integer32();
+                    Log.d(TAG, "The parent identifier is: " + itemDataParentIdentifier);
+                    itemDataName = incomingMessage.text();
+                    Log.d(TAG, "The container is: " + itemDataName);
+                    itemDataDescription = incomingMessage.text();
+                    Log.d(TAG, "The item description is: " + itemDataDescription);
+                    itemDataInternal = incomingMessage.binary8();
+                    Log.d(TAG, "DataInternal is: " + itemDataInternal);
+                    itemDataX = incomingMessage.decimal64();
+                    Log.d(TAG, "X is: " + itemDataX);
+                    itemDataY = incomingMessage.decimal64();
+                    Log.d(TAG, "Y is: " + itemDataY);
+                    itemDataZ = incomingMessage.decimal64();
+                    Log.d(TAG, "Z is: " + itemDataZ);
                     try {
                         Container newUnit = new Container(cm.getCentralUnit(getURL()), identifier);
                         newUnit.setName(itemDataName);
@@ -321,7 +323,7 @@ thread.start();
                     }
 
 
-                break;
+                    break;
 
                 case 0x09:
                     Log.d(TAG, "Decimal value changed.");
@@ -355,13 +357,12 @@ thread.start();
                     break;
             }
 
-
         }
     }
 
     private void stopNetworking() {
     Log.d(TAG, "Stopping networking");
-/*
+
         OutgoingMessage outgoingMessage = new OutgoingMessage();
         outgoingMessage
                 .integer8(0x01)      // protocol-version
@@ -375,7 +376,6 @@ thread.start();
             Log.d(TAG, "There was exception when closing the connections: " + exception);
 
         }
-*/
     }
 
     private void sendListeningStart(Container container) {

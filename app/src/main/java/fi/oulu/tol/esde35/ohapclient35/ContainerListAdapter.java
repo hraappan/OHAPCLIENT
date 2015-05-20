@@ -18,6 +18,7 @@ import com.opimobi.ohap.Item;
 
 import java.util.ArrayList;
 
+import fi.oulu.tol.esde35.ohap.CentralUnitConnection;
 import fi.oulu.tol.esde35.ohapclient35.R;
 
 /**
@@ -204,7 +205,6 @@ public class ContainerListAdapter extends ActionBarActivity implements ListAdapt
     @Override
     public void onEvent(Object o, Object o2) {
         Log.d(TAG, "the object o: " + o + "and the object o2: " + o2);
-
         observable.notifyChanged();
 
     }

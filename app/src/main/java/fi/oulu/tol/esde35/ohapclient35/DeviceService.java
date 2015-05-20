@@ -14,6 +14,8 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.opimobi.ohap.CentralUnit;
+import com.opimobi.ohap.Container;
 import com.opimobi.ohap.Device;
 import com.opimobi.ohap.HbdpConnection;
 
@@ -22,7 +24,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
+
+import fi.oulu.tol.esde35.ohap.CentralUnitConnection;
+import fi.oulu.tol.esde35.ohap.ConnectionManager;
+import fi.oulu.tol.esde35.ohap.IncomingMessage;
+import fi.oulu.tol.esde35.ohap.OutgoingMessage;
 
 /**
  * Created by Hannu Raappana on 27.4.2015.
@@ -41,8 +47,11 @@ public class DeviceService extends Service implements DeviceObserver, DeviceServ
     private final DeviceServiceBinder binder = new DeviceServiceBinder();
     private DeviceObserver observer = null;
     private MyCentralUnit centralUnit = null;
+    private HbdpConnection connection;
+    private OutputStream outputStream;
+    private InputStream inputStream;
     private Looper mServiceLooper = null;
-    private DeviceServiceHandler mServiceHandler = null;
+    private static DeviceServiceHandler mServiceHandler = null;
     private final static String EXTRA_PREFIX = "fi.oulu.tol.esde35.ohapclient35.DeviceService";
     private final static String TAG = "DeviceService";
     private URL serverAddress;
@@ -53,14 +62,18 @@ public class DeviceService extends Service implements DeviceObserver, DeviceServ
     public void onCreate() {
 
         super.onCreate();
+        connection = new HbdpConnection(getServerAddress());
+
+        inputStream = connection.getInputStream();
+        outputStream = connection.getOutputStream();
 
         //Create the handler for messages.
         HandlerThread thread = new HandlerThread("DeviceServiceThread", Process.THREAD_PRIORITY_BACKGROUND);
-        //thread.start();
+        thread.start();
 
         //Get the message looper.
-        //mServiceLooper = thread.getLooper();
-        //mServiceHandler = new DeviceServiceHandler(mServiceLooper);
+        mServiceLooper = thread.getLooper();
+        mServiceHandler = new DeviceServiceHandler(mServiceLooper);
 
     }
 
@@ -83,7 +96,7 @@ public class DeviceService extends Service implements DeviceObserver, DeviceServ
     }
 
     //Returns the current server address to the caller.
-    public URL getServerAddress() {
+    final public URL getServerAddress() {
 
         if(serverAddress != null)
             return serverAddress;
@@ -109,10 +122,16 @@ public class DeviceService extends Service implements DeviceObserver, DeviceServ
     *
     */
 
-    private final class DeviceServiceHandler extends Handler {
+    public static DeviceServiceHandler getDeviceService() {
+        return mServiceHandler;
+    }
+
+    public final class DeviceServiceHandler extends Handler {
 
         public DeviceServiceHandler(Looper looper) {
             super(looper);
+
+
         }
 
         /**
@@ -122,43 +141,11 @@ public class DeviceService extends Service implements DeviceObserver, DeviceServ
          */
         @Override
         public void handleMessage(Message msg) {
-            super.handleMessage(msg);
+            //super.handleMessage(msg);
 
-
-            Log.d(TAG, "Creating connection to: " + getServerAddress());
-
-            if (msg.obj == "retrieve") {
-                //Creaate connection using HBDP.
-                Log.d(TAG, "Retrieving devices.");
-                HbdpConnection myConnection = new HbdpConnection(getServerAddress());
-                OutputStream out = myConnection.getOutputStream();
-                try {
-                    String myString = "keke";
-                    out.write(myString.getBytes());
-                } catch (IOException exception) {
-                    Log.d(TAG, "There was something wrong with the connection." + exception);
-
-                }
-
-                int kekestring;
-
-                InputStream in = myConnection.getInputStream();
-
-                try {
-                    while(true) {
-                        kekestring = (in.read());
-                        Log.d(TAG, "the char is: " + Character.toString((char)kekestring));
-                    }
-                }
-                catch(IOException exception) {
-                    Log.d(TAG, "Couldn't retrieve the answer from the server." + exception);
-
-                }
-
-                stopSelf();
             }
-        }
-    }
+
+}
 
     @Override
     public void deviceStateChanged() {
@@ -172,7 +159,7 @@ public class DeviceService extends Service implements DeviceObserver, DeviceServ
 
     //Inner class for binding the service.
     public class DeviceServiceBinder extends Binder {
-        DeviceService getService() {
+        public DeviceService getService() {
 
             return DeviceService.this;
         }

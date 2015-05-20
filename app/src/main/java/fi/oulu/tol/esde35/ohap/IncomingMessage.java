@@ -10,6 +10,8 @@ import java.nio.charset.Charset;
 
 /**
  * Created by Hannu Raappana on 12.5.2015.
+ *
+ * The class handles reading of the incoming messages.
  */
 public class IncomingMessage {
     private final static String TAG = "IncomingMessage";
@@ -57,8 +59,7 @@ public class IncomingMessage {
      */
     public void readFrom(InputStream is) throws  IOException{
 
-        //Reset the position.
-        //position = 0;
+
        int value = (is.read() &0xFF) << 8 | is.read()&0xFF;
        Log.d(TAG, "The length value is: " + value );
 
@@ -105,13 +106,18 @@ public class IncomingMessage {
     them to a 32 bit unsigned integer.
      */
     public int integer32() {
+int int32 = 0;
+        try {
+            int32 = ((buffer[position += 1]) << 24) & 0xFF |
+                    ((buffer[position += 1]) << 16) & 0xFF |
+                    ((buffer[position += 1]) << 8) & 0xFF |
+                    ((buffer[position += 1]) << 0) & 0xFF;
+        }
+        catch(IndexOutOfBoundsException exception) {
+            Log.d(TAG, "The array is out of bounds. Something wrong with the structure of the message.");
+        }
 
-        int i = ((buffer[position+=1]) << 24)&0xFF|
-                ((buffer[position+=1]) << 16)&0xFF|
-                ((buffer[position+=1]) << 8)& 0xFF |
-                ((buffer[position+=1]) << 0)& 0xFF;
-
-    return  i;
+    return  int32;
     }
 
     /*
@@ -120,17 +126,26 @@ public class IncomingMessage {
      */
 
     public double decimal64() {
+        long bits = 0;
+        try {
+            bits =
+                            ((buffer[position += 1]) << 56) & 0xFF |
+                            ((buffer[position += 1]) << 48) & 0xFF |
+                            ((buffer[position += 1]) << 40) & 0xFF |
+                            ((buffer[position += 1]) << 32) & 0xFF |
+                            ((buffer[position += 1]) << 24) & 0xFF |
+                            ((buffer[position += 1]) << 16) & 0xFF |
+                            ((buffer[position += 1]) << 8) & 0xFF |
+                            ((buffer[position += 1]) << 0) & 0xFF;
+        }
+            catch(IndexOutOfBoundsException exception ) {
+                Log.d(TAG, "The array is out of bounds. Something wrong with the structure of the message." + exception);
 
-        long bits =
-                ((buffer[position+=1]) << 56) &0xFF|
-                ((buffer[position+=1]) << 48) &0xFF|
-                ((buffer[position+=1]) << 40) &0xFF|
-                ((buffer[position+=1]) << 32) &0xFF|
-                ((buffer[position+=1]) << 24) &0xFF|
-                ((buffer[position+=1]) << 16) &0xFF|
-                ((buffer[position+=1]) << 8)  &0xFF|
-                ((buffer[position+=1]) << 0)  &0xFF;
-        double d = Double.longBitsToDouble(bits);
+            }
+
+        Log.d(TAG, "The bits are:_" + bits);
+        double d = Double.valueOf(bits);
+        Log.d(TAG, "The value is : " + d);
     return d;
     }
 
@@ -143,13 +158,22 @@ public class IncomingMessage {
     public String text() {
         String string=null;
         int length = 0;
-        length = buffer[position+=1] & 0xff| buffer [position+=1] & 0xff;
+
+        try {
+            length = buffer[position += 1] & 0xff | buffer[position += 1] & 0xff;
+        }
+        catch(IndexOutOfBoundsException exception) {
+            Log.d(TAG, "The array is out of bounds. Something wrong with the structure of the message." + exception);
+        }
         Log.d(TAG, "The length of the string is: " + length);
         Log.d(TAG, "The length of the buffer: " + buffer.length);
         Log.d(TAG, "Current position is: " + position);
 
-                string = new String(buffer, position+1, length, charset);
-
+        try {
+            string = new String(buffer, position + 1, length, charset);
+        }catch(StringIndexOutOfBoundsException exception) {
+            Log.d(TAG, "Something wrong with the string." + exception);
+        }
         position+=length;
 
             //Move the pointer to the end of the string.
