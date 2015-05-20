@@ -342,6 +342,7 @@ thread.start();
                     connection = (CentralUnitConnection) cm.getCentralUnit(getURL());
                     device = (Device) connection.getItemById(itemIdentifier);
                     device.setBinaryValue(binaryValue);
+
                     break;
                 case 0x0b:
                     Log.d(TAG, "Item destroyed.");
@@ -426,7 +427,9 @@ thread.start();
      */
     @Override
     protected void changeBinaryValue(Device device, boolean value) {
-
+        Log.d(TAG, "The binary value of the device " + device.getId() + " has changed to " + value);
+        OutgoingMessage message = new OutgoingMessage();
+        message.integer8(0x0a).integer32((int)device.getId()).binary8(value).writeTo(outputStream);
 
     }
 
@@ -444,7 +447,9 @@ thread.start();
      */
     @Override
     protected void changeDecimalValue(Device device, double value) {
-
+        Log.d(TAG, "The decimal value of the device " + device.getId() + " has changed to " + value);
+        OutgoingMessage message = new OutgoingMessage();
+        message.integer8(0x09).integer32((int)device.getId()).decimal64(value).writeTo(outputStream);
     }
 
     /**

@@ -57,8 +57,8 @@
       <file leaf-file-name="ContainerActivity.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohapclient35/ContainerActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-7.892857" vertical-offset="2397" max-vertical-offset="3774">
-              <caret line="154" column="0" selection-start-line="154" selection-start-column="0" selection-end-line="154" selection-end-column="0" />
+            <state vertical-scroll-proportion="-4.607143" vertical-offset="3101" max-vertical-offset="3774">
+              <caret line="190" column="35" selection-start-line="190" selection-start-column="30" selection-end-line="190" selection-end-column="35" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#5846#8235#0" expanded="true" />
@@ -71,12 +71,39 @@
       <file leaf-file-name="CentralUnitConnection.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohap/CentralUnitConnection.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-11.892858" vertical-offset="2455" max-vertical-offset="8347">
-              <caret line="164" column="62" selection-start-line="163" selection-start-column="62" selection-end-line="164" selection-end-column="62" />
+            <state vertical-scroll-proportion="-4.8490567" vertical-offset="5591" max-vertical-offset="8432">
+              <caret line="344" column="0" selection-start-line="344" selection-start-column="0" selection-end-line="344" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#1575#2350#0" expanded="true" />
                 <element signature="e#2339#2340#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="OutgoingMessage.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohap/OutgoingMessage.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="1437" max-vertical-offset="2975">
+              <caret line="160" column="25" selection-start-line="160" selection-start-column="23" selection-end-line="160" selection-end-column="25" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DeviceService.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohapclient35/DeviceService.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-58.892857" vertical-offset="918" max-vertical-offset="4335">
+              <caret line="151" column="0" selection-start-line="151" selection-start-column="0" selection-end-line="151" selection-end-column="0" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#4175#4176#0" expanded="true" />
+                <element signature="e#4213#4214#0" expanded="true" />
+                <element signature="e#4733#4734#0" expanded="true" />
+                <element signature="e#4798#4799#0" expanded="true" />
+                <element signature="e#4833#4834#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -92,73 +119,14 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="HbdpConnection.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/opimobi/ohap/HbdpConnection.java">
+      <file leaf-file-name="DeviceObserver.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohapclient35/DeviceObserver.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="3891" max-vertical-offset="5406">
-              <caret line="275" column="0" selection-start-line="275" selection-start-column="0" selection-end-line="275" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Container.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/opimobi/ohap/Container.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-4.607143" vertical-offset="1826" max-vertical-offset="2754">
-              <caret line="121" column="0" selection-start-line="121" selection-start-column="0" selection-end-line="121" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="374">
+              <caret line="13" column="52" selection-start-line="13" selection-start-column="52" selection-end-line="13" selection-end-column="52" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#2413#2414#0" expanded="true" />
-                <element signature="e#2446#2447#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DeviceService.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohapclient35/DeviceService.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-1.4285715" vertical-offset="2221" max-vertical-offset="4335">
-              <caret line="133" column="0" selection-start-line="133" selection-start-column="0" selection-end-line="133" selection-end-column="0" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#4175#4176#0" expanded="true" />
-                <element signature="e#4213#4214#0" expanded="true" />
-                <element signature="e#4669#4670#0" expanded="true" />
-                <element signature="e#4714#4715#0" expanded="true" />
-                <element signature="e#4779#4780#0" expanded="true" />
-                <element signature="e#4814#4815#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ContainerListAdapter.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohapclient35/ContainerListAdapter.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-4.607143" vertical-offset="3050" max-vertical-offset="4199">
-              <caret line="206" column="70" selection-start-line="206" selection-start-column="70" selection-end-line="206" selection-end-column="70" />
-              <folding>
-                <element signature="e#1747#1748#0" expanded="true" />
-                <element signature="e#1775#1776#0" expanded="true" />
-                <element signature="e#3690#3691#0" expanded="true" />
-                <element signature="e#3747#3748#0" expanded="true" />
-                <element signature="e#4061#4062#0" expanded="true" />
-                <element signature="e#4126#4127#0" expanded="true" />
-                <element signature="e#4368#4369#0" expanded="true" />
-                <element signature="e#4396#4397#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ConnectionManager.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohap/ConnectionManager.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="196" max-vertical-offset="782">
-              <caret line="32" column="47" selection-start-line="32" selection-start-column="47" selection-end-line="32" selection-end-column="47" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -166,11 +134,33 @@
       <file leaf-file-name="DeviceActivity.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohapclient35/DeviceActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.6721763" vertical-offset="3700" max-vertical-offset="6596">
-              <caret line="234" column="37" selection-start-line="234" selection-start-column="37" selection-end-line="234" selection-end-column="37" />
+            <state vertical-scroll-proportion="0.53168046" vertical-offset="6233" max-vertical-offset="7004">
+              <caret line="386" column="82" selection-start-line="386" selection-start-column="82" selection-end-line="386" selection-end-column="82" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#6171#6525#0" expanded="true" />
+                <element signature="e#6510#6511#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Device.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/opimobi/ohap/Device.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-4.607143" vertical-offset="2132" max-vertical-offset="5457">
+              <caret line="133" column="24" selection-start-line="133" selection-start-column="16" selection-end-line="133" selection-end-column="24" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CentralUnit.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/opimobi/ohap/CentralUnit.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="1707" max-vertical-offset="2499">
+              <caret line="113" column="23" selection-start-line="113" selection-start-column="14" selection-end-line="113" selection-end-column="23" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -946,7 +936,6 @@
         <option value="$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohapclient35/MyCentralUnit.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohapclient35/MyListAdapter.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohapclient35/DeviceServer.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohapclient35/DeviceObserver.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohapclient35/DeviceHolder.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohapclient35/SettingsActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohapclient35/DeviceView.java" />
@@ -968,10 +957,12 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/opimobi/ohap/Container.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohap/ConnectionManager.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohapclient35/ContainerActivity.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohapclient35/DeviceService.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohapclient35/ContainerListAdapter.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohap/CentralUnitConnection.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohap/IncomingMessage.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/opimobi/ohap/Device.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohapclient35/DeviceObserver.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohapclient35/DeviceService.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohap/CentralUnitConnection.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohapclient35/DeviceActivity.java" />
       </list>
     </option>
@@ -1569,6 +1560,8 @@
           <caret line="53" column="46" selection-start-line="53" selection-start-column="46" selection-end-line="53" selection-end-column="46" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#6171#6525#0" expanded="true" />
+            <element signature="e#6510#6511#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1671,13 +1664,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohapclient35/DeviceObserver.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="340">
-          <caret line="11" column="41" selection-start-line="11" selection-start-column="41" selection-end-line="11" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohapclient35/DeviceServiceInterface.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="272">
@@ -1777,14 +1763,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohap/OutgoingMessage.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="2394" max-vertical-offset="2975">
-          <caret line="160" column="25" selection-start-line="160" selection-start-column="23" selection-end-line="160" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/AppData/Local/Android/sdk/sources/android-21/com/android/internal/os/ZygoteInit.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.80941707" vertical-offset="14191" max-vertical-offset="14790">
@@ -1848,22 +1826,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/opimobi/ohap/Device.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1749" max-vertical-offset="5389">
-          <caret line="111" column="0" selection-start-line="111" selection-start-column="0" selection-end-line="111" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/opimobi/ohap/CentralUnit.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-4.607143" vertical-offset="1707" max-vertical-offset="2499">
-          <caret line="113" column="23" selection-start-line="113" selection-start-column="14" selection-end-line="113" selection-end-column="23" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/opimobi/ohap/HbdpConnection.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="3891" max-vertical-offset="5406">
@@ -1880,14 +1842,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohapclient35/DeviceServerInterface.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="408">
-          <caret line="7" column="58" selection-start-line="7" selection-start-column="58" selection-end-line="7" selection-end-column="58" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/opimobi/ohap/Container.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-4.607143" vertical-offset="1826" max-vertical-offset="2754">
@@ -1896,22 +1850,6 @@
             <element signature="imports" expanded="true" />
             <element signature="e#2413#2414#0" expanded="true" />
             <element signature="e#2446#2447#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohapclient35/DeviceService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-1.4285715" vertical-offset="2221" max-vertical-offset="4335">
-          <caret line="133" column="0" selection-start-line="133" selection-start-column="0" selection-end-line="133" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#4175#4176#0" expanded="true" />
-            <element signature="e#4213#4214#0" expanded="true" />
-            <element signature="e#4669#4670#0" expanded="true" />
-            <element signature="e#4714#4715#0" expanded="true" />
-            <element signature="e#4779#4780#0" expanded="true" />
-            <element signature="e#4814#4815#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1933,27 +1871,27 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohapclient35/ContainerActivity.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/opimobi/ohap/Device.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-7.892857" vertical-offset="2397" max-vertical-offset="3774">
-          <caret line="154" column="0" selection-start-line="154" selection-start-column="0" selection-end-line="154" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#5846#8235#0" expanded="true" />
-            <element signature="e#8224#8225#0" expanded="true" />
-          </folding>
+        <state vertical-scroll-proportion="-4.607143" vertical-offset="2132" max-vertical-offset="5457">
+          <caret line="133" column="24" selection-start-line="133" selection-start-column="16" selection-end-line="133" selection-end-column="24" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohap/CentralUnitConnection.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/opimobi/ohap/CentralUnit.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-11.892858" vertical-offset="2455" max-vertical-offset="8347">
-          <caret line="164" column="62" selection-start-line="163" selection-start-column="62" selection-end-line="164" selection-end-column="62" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1575#2350#0" expanded="true" />
-            <element signature="e#2339#2340#0" expanded="true" />
-          </folding>
+        <state vertical-scroll-proportion="0.0" vertical-offset="1707" max-vertical-offset="2499">
+          <caret line="113" column="23" selection-start-line="113" selection-start-column="14" selection-end-line="113" selection-end-column="23" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohap/OutgoingMessage.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1437" max-vertical-offset="2975">
+          <caret line="160" column="25" selection-start-line="160" selection-start-column="23" selection-end-line="160" selection-end-column="25" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1965,12 +1903,71 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohapclient35/DeviceActivity.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohapclient35/DeviceServerInterface.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6721763" vertical-offset="3700" max-vertical-offset="6596">
-          <caret line="234" column="37" selection-start-line="234" selection-start-column="37" selection-end-line="234" selection-end-column="37" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="408">
+          <caret line="7" column="58" selection-start-line="7" selection-start-column="58" selection-end-line="7" selection-end-column="58" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohapclient35/DeviceObserver.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="374">
+          <caret line="13" column="52" selection-start-line="13" selection-start-column="52" selection-end-line="13" selection-end-column="52" />
           <folding>
             <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohapclient35/DeviceService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-58.892857" vertical-offset="918" max-vertical-offset="4335">
+          <caret line="151" column="0" selection-start-line="151" selection-start-column="0" selection-end-line="151" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#4175#4176#0" expanded="true" />
+            <element signature="e#4213#4214#0" expanded="true" />
+            <element signature="e#4733#4734#0" expanded="true" />
+            <element signature="e#4798#4799#0" expanded="true" />
+            <element signature="e#4833#4834#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohap/CentralUnitConnection.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-4.8490567" vertical-offset="5591" max-vertical-offset="8432">
+          <caret line="344" column="0" selection-start-line="344" selection-start-column="0" selection-end-line="344" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1575#2350#0" expanded="true" />
+            <element signature="e#2339#2340#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohapclient35/ContainerActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-4.607143" vertical-offset="3101" max-vertical-offset="3774">
+          <caret line="190" column="35" selection-start-line="190" selection-start-column="30" selection-end-line="190" selection-end-column="35" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#5846#8235#0" expanded="true" />
+            <element signature="e#8224#8225#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/fi/oulu/tol/esde35/ohapclient35/DeviceActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.53168046" vertical-offset="6233" max-vertical-offset="7004">
+          <caret line="386" column="82" selection-start-line="386" selection-start-column="82" selection-end-line="386" selection-end-column="82" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#6171#6525#0" expanded="true" />
+            <element signature="e#6510#6511#0" expanded="true" />
           </folding>
         </state>
       </provider>

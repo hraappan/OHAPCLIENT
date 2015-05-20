@@ -1,5 +1,7 @@
 package fi.oulu.tol.esde35.ohapclient35;
 
+import com.opimobi.ohap.Device;
+
 import java.util.Observer;
 
 /**
@@ -9,6 +11,6 @@ import java.util.Observer;
  */
 public interface DeviceObserver {
 
-        public void deviceStateChanged();
+        public void deviceStateChanged(Device device);
 
 }

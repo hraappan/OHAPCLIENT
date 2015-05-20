@@ -1,5 +1,7 @@
 package com.opimobi.ohap;
 
+import android.util.Log;
+
 /**
  * A real device in an OHAP application. Inherits all common properties from the
  * {@link com.opimobi.ohap.Item} base class.
@@ -20,6 +22,7 @@ package com.opimobi.ohap;
  * @version 1.1
  */
 public class Device extends Item {
+    private static final String TAG = "Device";
     /**
      * The possible types of a device.
      */
@@ -265,6 +268,7 @@ public class Device extends Item {
 
         this.binaryValue = binaryValue;
         valueChangedEventSource.fireEvent(null);
+        Log.d(TAG, "The device value has changed.");
     }
 
     /**

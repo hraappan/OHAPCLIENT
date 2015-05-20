@@ -133,10 +133,11 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
 
         if(deviceId == 0 || address == null) {
             Toast.makeText(this, "The device id or address is missing from the intent.", Toast.LENGTH_SHORT ).show();
-
+            return;
         }
 
-        Log.d(TAG, "The address is: " + bundle.get(EXTRA_CENTRAL_UNIT_URL));
+
+        Log.d(TAG, "The address is: " + address);
         Log.d(TAG, "The deviceID is: " + deviceId);
         //Get the current central unit.
         cu = cm.getCentralUnit(address);
@@ -170,7 +171,7 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
         deviceDescription.setVisibility(View.VISIBLE);
 
         //If the device is binary type we show the switch.
-        if (device.getValueType() == Device.ValueType.BINARY && device.getType() != Device.Type.SENSOR) {
+        if (device.getValueType() == Device.ValueType.BINARY && device.getType() == Device.Type.ACTUATOR) {
             Log.d(TAG, "Binary type selected:");
             mySwitch = (Switch) findViewById(R.id.switch_value);
             mySwitch.setChecked(device.getBinaryValue());
@@ -179,6 +180,7 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     Log.d(TAG, "Switch is checked: " + isChecked);
                     device.setBinaryValue(isChecked);
+                    deviceService.deviceStateChanged(device);
                 }
             });
 
@@ -189,7 +191,7 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
         }
 
         //Else we show the seekbar.
-        else if(device.getValueType() == Device.ValueType.DECIMAL && device.getType() != Device.Type.SENSOR){
+        else if(device.getValueType() == Device.ValueType.DECIMAL && device.getType() == Device.Type.ACTUATOR){
             Log.d(TAG, "Decimal type selected:");
             final EditText editText = (EditText) findViewById(R.id.editText_value);
             editText.setText(Integer.toString((int) device.getDecimalValue()));
@@ -222,7 +224,8 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
 
         }
 
-        else if(device.getType() == Device.Type.SENSOR) {
+        //If decimal sensor
+        else if(device.getType() == Device.Type.SENSOR && device.getValueType() == Device.ValueType.DECIMAL) {
             mySwitch = (Switch) findViewById(R.id.switch_value);
             mySeekBar = (SeekBar) findViewById(R.id.seekBar_value);
             Log.d(TAG, "The device was sensor.");
@@ -233,6 +236,19 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
             editText.setText(String.valueOf(device.getDecimalValue()) + " " + device.getUnitAbbreviation());
             editText.setVisibility(View.VISIBLE);
             editText.setEnabled(false);
+            sManager.unregisterListener(mHandler);
+
+        }
+
+        else if(device.getType() == Device.Type.SENSOR && device.getValueType() == Device.ValueType.BINARY) {
+            mySwitch = (Switch) findViewById(R.id.switch_value);
+            mySeekBar = (SeekBar) findViewById(R.id.seekBar_value);
+            Log.d(TAG, "The device was sensor.");
+            mySwitch.setVisibility(View.VISIBLE);
+            mySeekBar.setVisibility(View.GONE);
+            mySwitch.setChecked(device.getBinaryValue());
+            mySwitch.setEnabled(false);
+            sManager.unregisterListener(mHandler);
 
 
         }
@@ -301,8 +317,8 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
     }
 
     @Override
-    public void deviceStateChanged() {
-        showNotification();
+    public void deviceStateChanged(Device device) {
+        showNotification(device);
     }
 
     @Override
@@ -330,6 +346,7 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
         Log.d(TAG, "The phone is upside-down.");
         if(device.getValueType() == Device.ValueType.BINARY)
             device.changeBinaryValue(false);
+        device.setBinaryValue(false);
             Log.d(TAG, "The device is now: " + device.getBinaryValue());
             updateView();
     }
@@ -339,6 +356,7 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
         Log.d(TAG, "The phone is facing up.");
             if(device.getValueType() == Device.ValueType.BINARY)
                 device.changeBinaryValue(true);
+        device.setBinaryValue(true);
                 Log.d(TAG, "The device is now: " + device.getBinaryValue());
                 updateView();
     }
@@ -356,15 +374,19 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
     }
 
         //Show notification on the system.
-        public void showNotification() {
+        public void showNotification(Device device) {
 
             NotificationCompat.Builder mBuilder =
                     new NotificationCompat.Builder(this)
                             .setSmallIcon(R.drawable.abc_edit_text_material)
                             .setContentTitle("My notification")
-                            .setContentText("Something happened");
+                            .setContentText(device.getName() + " has changed");
             // Creates an explicit intent for an Activity in your app
             Intent resultIntent = new Intent(this, DeviceActivity.class);
+            resultIntent.putExtra(DeviceActivity.EXTRA_CENTRAL_UNIT_URL, device.getCentralUnit().getURL());
+            resultIntent.putExtra(DeviceActivity.EXTRA_DEVICE_ID, device.getId());
+
+
 
             // The stack builder object will contain an artificial back stack for the
             // started Activity.

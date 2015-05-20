@@ -148,8 +148,8 @@ public class DeviceService extends Service implements DeviceObserver, DeviceServ
 }
 
     @Override
-    public void deviceStateChanged() {
-        observer.deviceStateChanged();
+    public void deviceStateChanged(Device device) {
+        observer.deviceStateChanged(device);
     }
 
     @Override
