@@ -1,5 +1,7 @@
 package com.opimobi.ohap;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 /**
@@ -21,6 +23,7 @@ import java.util.ArrayList;
  * @version 1.0
  */
 public class EventSource<Source, Event> {
+    private final static String TAG = "EventSource";
     /**
      * Defines a generic listener for the event source.
      *
@@ -84,10 +87,14 @@ public class EventSource<Source, Event> {
      * @param event The event data.
      */
     public void fireEvent(Event event) {
-        if (listeners == null)
+        Log.d(TAG, "Event happened here.");
+        if (listeners == null) {
+            Log.d(TAG, "There were no listeners");
             return;
+        }
 
         for (Listener<Source, Event> listener : listeners) {
+            Log.d(TAG, "Inform listener  " + listener);
             listener.onEvent(source, event);
         }
     }

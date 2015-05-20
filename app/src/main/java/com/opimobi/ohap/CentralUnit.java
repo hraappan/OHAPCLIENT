@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 /**
  * A central unit in an OHAP application. Acts also as a top-level
- * {@link com.opimobi.ohap.Container}. The identifier of the central unit is 0. It does not have
+ * {@link Container}. The identifier of the central unit is 0. It does not have
  * a parent container.
  *
  * The central unit has an URL that is used when connecting to the OHAP server.
@@ -14,7 +14,7 @@ import java.util.HashMap;
  * central unit provides {@link #getItemById(long)} method to retrieve an item from any
  * level of the container hierarchy by specifying the identifier of the item.
  *
- * @see com.opimobi.ohap.Container
+ * @see Container
  *
  * @author Henrik hedberg &lt;henrik.hedberg@iki.fi>
  * @version 1.3
@@ -59,12 +59,12 @@ public abstract class CentralUnit extends Container {
     /**
      * Asks the central unit to change the value of the specified actuator device, of which value
      * type is binary. The method is called only by the
-     * {@link com.opimobi.ohap.Device#changeBinaryValue(boolean)} method, which also verifies the
+     * {@link Device#changeBinaryValue(boolean)} method, which also verifies the
      * prerequisites for the request.
      *
      * This method is abstract and must be provided by the implementation.
      *
-     * @see com.opimobi.ohap.Device#changeBinaryValue(boolean)
+     * @see Device#changeBinaryValue(boolean)
      * @param device The device of which state is asked to be changed.
      * @param value The new binary value for the device.
      */
@@ -73,12 +73,12 @@ public abstract class CentralUnit extends Container {
     /**
      * Asks the central unit to change the value of the specified actuator device, of which value
      * type is decimal. The method is called only by the
-     * {@link com.opimobi.ohap.Device#changeDecimalValue(double)} method, which also verifies the
+     * {@link Device#changeDecimalValue(double)} method, which also verifies the
      * prerequisites for the request.
      *
      * This method is abstract and must be provided by the implementation.
      *
-     * @see com.opimobi.ohap.Device#changeDecimalValue(double)
+     * @see Device#changeDecimalValue(double)
      * @param device The device of which state is asked to be changed.
      * @param value The new binary value for the device.
      */
@@ -121,7 +121,7 @@ public abstract class CentralUnit extends Container {
      * Used only by the item when it is created.
      *
      * @param item The item to be registered into the central unit.
-     * @exception java.lang.IllegalArgumentException If an item with the same id already exists.
+     * @exception IllegalArgumentException If an item with the same id already exists.
      */
     void register(Item item) {
         Item previousItem = items.put(item.getId(), item);

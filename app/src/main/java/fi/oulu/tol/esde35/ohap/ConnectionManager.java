@@ -3,6 +3,7 @@ package fi.oulu.tol.esde35.ohap;
 import android.util.Log;
 
 import com.opimobi.ohap.CentralUnit;
+import com.opimobi.ohap.Container;
 
 import java.net.URL;
 import java.util.HashMap;
@@ -22,9 +23,12 @@ public class ConnectionManager
     }
     public CentralUnit getCentralUnit(URL url) {
 
-        if(connectionMap.containsKey(url))
+        if(connectionMap.containsKey(url)) {
+            Log.d(TAG, "Returning connection from the map");
             return connectionMap.get(url);
+        }
         else {
+            Log.d(TAG, "Returning new connection.");
             CentralUnitConnection connection = new CentralUnitConnection(url);
             connectionMap.put(url, connection);
         }

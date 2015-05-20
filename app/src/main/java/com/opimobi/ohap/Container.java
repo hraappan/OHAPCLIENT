@@ -23,6 +23,8 @@ import java.util.ArrayList;
  * @version 1.1
  */
 public class Container extends Item {
+
+    private final static String TAG = "Container";
     /**
      * The event source for item added events. The listeners of this source will be called
      * after an item has been added into the container. The event argument (Item) is the added item.
@@ -115,8 +117,11 @@ public class Container extends Item {
      */
     public void startListening() {
         listeners++;
-        if (listeners == 1)
+
+        if (listeners == 1) {
             getCentralUnit().listeningStateChanged(this, true);
+            Log.d(TAG, "Start listening now");
+        }
     }
 
     /**

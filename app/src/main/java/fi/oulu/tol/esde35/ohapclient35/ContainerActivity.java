@@ -2,6 +2,7 @@ package fi.oulu.tol.esde35.ohapclient35;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
@@ -13,11 +14,14 @@ import android.widget.Toast;
 
 import com.opimobi.ohap.CentralUnit;
 import com.opimobi.ohap.Container;
+import com.opimobi.ohap.EventSource;
 import com.opimobi.ohap.Item;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.EventListener;
 
+import fi.oulu.tol.esde35.ohap.CentralUnitConnection;
 import fi.oulu.tol.esde35.ohap.ConnectionManager;
 
 /**
@@ -32,10 +36,13 @@ public class ContainerActivity extends ActionBarActivity {
     private final static String TAG = "ContainerActivity";
     private URL url;
     private long containerID;
-    private CentralUnit unit;
+    private Container container = null;
     private ConnectionManager cm = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
+
         super.onCreate(savedInstanceState);
         //Get the connection manager.
         cm = ConnectionManager.getInstance();
@@ -49,7 +56,6 @@ public class ContainerActivity extends ActionBarActivity {
         //If the bundle is not empty we take the information from the intent.
         if(bundle != null) {
             containerID = bundle.getLong(EXTRA_CONTAINER_ID, 0);
-            url = (URL) bundle.get(EXTRA_CENTRAL_UNIT_URL);
         }
 
         if(url == null) {
@@ -67,22 +73,30 @@ public class ContainerActivity extends ActionBarActivity {
             }
         }
 
+        else {
+            url = (URL) bundle.get(EXTRA_CENTRAL_UNIT_URL);
+        }
+
         //if the container id is null we use the centralunit as a container.
         if(containerID == 0) {
             Log.d(TAG, "Using centralunit as a container.");
-            unit = cm.getCentralUnit(url);
-        }
+            container = cm.getCentralUnit(url);
 
+        }
         //else we get the specific container from the connectionmanager.
         else {
             Log.d(TAG, "Taking the unit from the manager.");
-            unit = (CentralUnit) cm.getCentralUnit(url).getItemById(containerID);
+            container = (Container) cm.getCentralUnit(url).getItemById(containerID);
+            Log.d(TAG,  "The container was: " + container.getName());
+
         }
-        Log.d(TAG, "The container has: " + unit.getCentralUnit().getItemCount() + "items.");
+        Log.d(TAG, "The container has: " + container.getItemCount() + "items.");
+        Log.d(TAG, "The container is: " + container.getName());
 
-        unit.startListening();
+        container.startListening();
 
-        ContainerListAdapter myAdapter = new ContainerListAdapter(unit);
+
+        ContainerListAdapter myAdapter = new ContainerListAdapter(container);
         myListView.setAdapter(myAdapter);
 
         //Add listener to the myListView.
@@ -113,6 +127,8 @@ public class ContainerActivity extends ActionBarActivity {
                 if(parent.getItemAtPosition(position) instanceof Container) {
                     Log.d(TAG, "Container selected.");
                     Intent intent = new Intent(ContainerActivity.this, ContainerActivity.class);
+                    Log.d(TAG, "The url in the intent is: " + url);
+                    Log.d(TAG, "The id of the unit is: " +id);
                     intent.putExtra(ContainerActivity.EXTRA_CENTRAL_UNIT_URL, url);
                     intent.putExtra(ContainerActivity.EXTRA_CONTAINER_ID, id);
                     startActivity(intent);
@@ -136,4 +152,6 @@ public class ContainerActivity extends ActionBarActivity {
 
 
     }
-    }
+
+
+}

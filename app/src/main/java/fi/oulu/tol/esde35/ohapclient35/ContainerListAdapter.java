@@ -3,6 +3,7 @@ package fi.oulu.tol.esde35.ohapclient35;
 import android.content.Context;
 import android.database.DataSetObservable;
 import android.database.DataSetObserver;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,7 +25,7 @@ import fi.oulu.tol.esde35.ohapclient35.R;
  *
  * Adapter for handling the listview actions.
  */
-public class ContainerListAdapter implements ListAdapter, EventSource.Listener {
+public class ContainerListAdapter extends ActionBarActivity implements ListAdapter, EventSource.Listener {
 
     private final String TAG = ".MyListAdapter";
     private DataSetObservable observable = new DataSetObservable();
@@ -36,22 +37,8 @@ public class ContainerListAdapter implements ListAdapter, EventSource.Listener {
         Log.d(TAG, "The container in adapter is: " + container.getName());
 
 
-        container.itemAddedEventSource.addListener(new EventSource.Listener<Container, Item>() {
-
-            @Override
-            public void onEvent(Container container, Item item) {
-                Log.d(TAG, "The container in the adapter is: " + container);
-
-            }
-        });
-
-        container.itemRemovedEventSource.addListener(new EventSource.Listener<Container, Item>() {
-            @Override
-            public void onEvent(Container container, Item item) {
-                Log.d(TAG, "The container in the adapter is: " + container);
-
-            }
-        });
+        container.itemAddedEventSource.addListener(this);
+        container.itemRemovedEventSource.addListener(this);
 
 
     }
@@ -94,6 +81,7 @@ public class ContainerListAdapter implements ListAdapter, EventSource.Listener {
      */
     @Override
     public void registerDataSetObserver(DataSetObserver observer) {
+        Log.d(TAG, "Registering observer.");
         observable.registerObserver(observer);
     }
 
@@ -181,6 +169,8 @@ public class ContainerListAdapter implements ListAdapter, EventSource.Listener {
    {
 
        Log.d(TAG, "getView is called.");
+
+
         ViewHolder viewHolder;
 
             if(convertView == null) {
@@ -192,8 +182,11 @@ public class ContainerListAdapter implements ListAdapter, EventSource.Listener {
                 viewHolder.myTextView = (TextView) convertView.findViewById(R.id.RowView);
                 convertView.setTag(viewHolder);
 
+
+
             }
             else viewHolder = (ViewHolder)convertView.getTag();
+
 
        //Get the current device name.
        Log.d(TAG, "The current name is: " + container.getItemByIndex(position).getName());
@@ -211,6 +204,7 @@ public class ContainerListAdapter implements ListAdapter, EventSource.Listener {
     @Override
     public void onEvent(Object o, Object o2) {
         Log.d(TAG, "the object o: " + o + "and the object o2: " + o2);
+
         observable.notifyChanged();
 
     }

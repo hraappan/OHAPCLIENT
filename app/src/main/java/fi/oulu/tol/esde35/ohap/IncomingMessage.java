@@ -59,7 +59,7 @@ public class IncomingMessage {
 
         //Reset the position.
         //position = 0;
-       int value = (is.read() &0xff) << 8 | is.read()&0xff;
+       int value = (is.read() &0xFF) << 8 | is.read()&0xFF;
        Log.d(TAG, "The length value is: " + value );
 
         buffer = readExactly(is, value);
@@ -72,7 +72,7 @@ public class IncomingMessage {
 
     public boolean binary8() {
 
-        if((buffer[position+1] & 0x0FF) == 1) {
+        if((buffer[position+=1] & 0xFF) == 1) {
 
             return true;
         }
@@ -106,10 +106,10 @@ public class IncomingMessage {
      */
     public int integer32() {
 
-        int i = ((buffer[position+=1]) << 24)&0x0000FF|
-                ((buffer[position+=1]) << 16)&0x000FF|
-                ((buffer[position+=1]) << 8)& 0x00FF |
-                ((buffer[position+=1]) << 0)& 0x0FF;
+        int i = ((buffer[position+=1]) << 24)&0xFF|
+                ((buffer[position+=1]) << 16)&0xFF|
+                ((buffer[position+=1]) << 8)& 0xFF |
+                ((buffer[position+=1]) << 0)& 0xFF;
 
     return  i;
     }
@@ -122,14 +122,14 @@ public class IncomingMessage {
     public double decimal64() {
 
         long bits =
-                ((buffer[position+=1]) << 56) &0x0000000FF|
-                ((buffer[position+=1]) << 48) &0x0000000FF|
-                ((buffer[position+=1]) << 40) &0x000000FF|
-                ((buffer[position+=1]) << 32) &0x00000FF|
-                ((buffer[position+=1]) << 24) &0x0000FF|
-                ((buffer[position+=1]) << 16) &0x000FF|
-                ((buffer[position+=1]) << 8)  &0x00FF|
-                ((buffer[position+=1]) << 0)  & 0x0FF;
+                ((buffer[position+=1]) << 56) &0xFF|
+                ((buffer[position+=1]) << 48) &0xFF|
+                ((buffer[position+=1]) << 40) &0xFF|
+                ((buffer[position+=1]) << 32) &0xFF|
+                ((buffer[position+=1]) << 24) &0xFF|
+                ((buffer[position+=1]) << 16) &0xFF|
+                ((buffer[position+=1]) << 8)  &0xFF|
+                ((buffer[position+=1]) << 0)  &0xFF;
         double d = Double.longBitsToDouble(bits);
     return d;
     }
@@ -143,7 +143,6 @@ public class IncomingMessage {
     public String text() {
         String string=null;
         int length = 0;
-        //Log.d(TAG, "The first byte is: " + (buffer[position+1] & 0xFF) + "and the other: " + (buffer[position+2] & 0xFF));
         length = buffer[position+=1] & 0xff| buffer [position+=1] & 0xff;
         Log.d(TAG, "The length of the string is: " + length);
         Log.d(TAG, "The length of the buffer: " + buffer.length);

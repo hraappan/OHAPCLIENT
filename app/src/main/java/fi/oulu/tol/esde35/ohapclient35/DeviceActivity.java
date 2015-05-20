@@ -50,7 +50,6 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
     protected ListView myListView = null;
     public static final String EXTRA_CENTRAL_UNIT_URL = "fi.oulu.tol.esde.esde35.CENTRAL_UNIT_URL";
     public static final String EXTRA_DEVICE_ID = "fi.oulu.tol.esde35.DEVICE_ID";
-    private URL url;
     private ConnectionManager cm;
     protected Switch mySwitch = null;
     protected SeekBar mySeekBar = null;
@@ -59,6 +58,7 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
     private DeviceService deviceService;
     private Device device;
     private CentralUnit cu;
+    private  long deviceId;
     private URL address;
     private SensorManager sManager;
     private DeviceOrientationHandler mHandler;
@@ -129,13 +129,22 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
         //Get values from the intents.
         Bundle bundle = intent.getExtras();
 
-        long deviceId = bundle.getLong(EXTRA_DEVICE_ID, 0);
-        URL url = (URL) bundle.get(EXTRA_CENTRAL_UNIT_URL);
+       try {
+           deviceId = bundle.getLong(EXTRA_DEVICE_ID, 0);
+           address = (URL) bundle.get(EXTRA_CENTRAL_UNIT_URL);
+       }catch(Exception e) {
+           Log.d(TAG, "There was an exception: " + e);
+       }
+
+        if(deviceId == 0 || address == null) {
+            Toast.makeText(this, "The device id or address is missing from the intent.", Toast.LENGTH_SHORT ).show();
+
+        }
 
         Log.d(TAG, "The address is: " + bundle.get(EXTRA_CENTRAL_UNIT_URL));
         Log.d(TAG, "The deviceID is: " + deviceId);
         //Get the current central unit.
-        cu = cm.getCentralUnit(url);
+        cu = cm.getCentralUnit(address);
         device = (Device) cu.getItemById(deviceId);
 
         Intent serviceIntent = new Intent(this, DeviceService.class);
@@ -166,7 +175,7 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
         deviceDescription.setVisibility(View.VISIBLE);
 
         //If the device is binary type we show the switch.
-        if (device.getValueType() == Device.ValueType.BINARY) {
+        if (device.getValueType() == Device.ValueType.BINARY && device.getType() != Device.Type.SENSOR) {
             Log.d(TAG, "Binary type selected:");
             mySwitch = (Switch) findViewById(R.id.switch_value);
             mySwitch.setChecked(device.getBinaryValue());
@@ -185,7 +194,7 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
         }
 
         //Else we show the seekbar.
-        else {
+        else if(device.getValueType() == Device.ValueType.DECIMAL && device.getType() != Device.Type.SENSOR){
             Log.d(TAG, "Decimal type selected:");
             final EditText editText = (EditText) findViewById(R.id.editText_value);
             editText.setText(Integer.toString((int) device.getDecimalValue()));
@@ -215,6 +224,17 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
             if (mySwitch != null)
                 mySwitch.setVisibility(View.GONE);
             mySeekBar.setVisibility(View.VISIBLE);
+
+        }
+
+        else if(device.getType() == Device.Type.SENSOR) {
+            mySwitch = (Switch) findViewById(R.id.switch_value);
+            mySeekBar = (SeekBar) findViewById(R.id.seekBar_value);
+            Log.d(TAG, "The device was sensor.");
+            mySwitch.setVisibility(View.GONE);
+            mySeekBar.setVisibility(View.GONE);
+            final EditText editText = (EditText) findViewById(R.id.editText_value);
+            editText.setText(Double.toString(device.getDecimalValue()));
 
         }
     }
