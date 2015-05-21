@@ -129,14 +129,14 @@ int int32 = 0;
         long bits = 0;
         try {
             bits =
-                            ((buffer[position += 1]) << 56) & 0xFF |
-                            ((buffer[position += 1]) << 48) & 0xFF |
-                            ((buffer[position += 1]) << 40) & 0xFF |
-                            ((buffer[position += 1]) << 32) & 0xFF |
-                            ((buffer[position += 1]) << 24) & 0xFF |
-                            ((buffer[position += 1]) << 16) & 0xFF |
-                            ((buffer[position += 1]) << 8) & 0xFF |
-                            ((buffer[position += 1]) << 0) & 0xFF;
+                            ((buffer[position += 1]) << 56) & 0xFFL |
+                            ((buffer[position += 1]) << 48) & 0xFFL |
+                            ((buffer[position += 1]) << 40) & 0xFFL |
+                            ((buffer[position += 1]) << 32) & 0xFFL |
+                            ((buffer[position += 1]) << 24) & 0xFFL |
+                            ((buffer[position += 1]) << 16) & 0xFFL |
+                            ((buffer[position += 1]) << 8) & 0xFFL |
+                            ((buffer[position += 1]) << 0) & 0xFFL;
         }
             catch(IndexOutOfBoundsException exception ) {
                 Log.d(TAG, "The array is out of bounds. Something wrong with the structure of the message." + exception);
@@ -144,7 +144,7 @@ int int32 = 0;
             }
 
         Log.d(TAG, "The bits are:_" + bits);
-        double d = Double.valueOf(bits);
+        double d = Double.longBitsToDouble(bits);
         Log.d(TAG, "The value is : " + d);
     return d;
     }

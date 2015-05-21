@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 import com.opimobi.ohap.CentralUnit;
 import com.opimobi.ohap.Device;
+import com.opimobi.ohap.EventSource;
 
 import java.net.URL;
 
@@ -53,6 +54,7 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
     private DeviceService deviceService;
     private Device device;
     private CentralUnit cu;
+    private static DeviceActivity instance;
     private  long deviceId;
     private URL address;
     private SensorManager sManager;
@@ -61,6 +63,7 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
     public DeviceActivity() {
 
     }
+
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
 
@@ -100,11 +103,15 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
         }
     };
 
+    public static Context getContext() {
+        return instance;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
+        instance = this;
 
+        //Get the sensors.
         sManager = (SensorManager) this.getSystemService(SENSOR_SERVICE);
         sensor = sManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mHandler = new DeviceOrientationHandler(this);
@@ -180,7 +187,7 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     Log.d(TAG, "Switch is checked: " + isChecked);
                     device.setBinaryValue(isChecked);
-                    deviceService.deviceStateChanged(device);
+                    device.changeBinaryValue(isChecked);
                 }
             });
 
@@ -197,15 +204,15 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
             editText.setText(Integer.toString((int) device.getDecimalValue()));
             editText.setVisibility(View.VISIBLE);
             mySeekBar = (SeekBar) findViewById(R.id.seekBar_value);
-
-
             mySeekBar.setProgress((int)device.getDecimalValue());
+
             mySeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                     Log.d(TAG, "Seekbar progress: " + progress);
                     device.setDecimalValue(seekBar.getProgress());
-                    editText.setText(progress);
+                    editText.setText(Integer.toString(progress) + " %");
+                    device.changeDecimalValue(seekBar.getProgress());
                 }
 
                 @Override
@@ -240,6 +247,7 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
 
         }
 
+        //If binary sensor
         else if(device.getType() == Device.Type.SENSOR && device.getValueType() == Device.ValueType.BINARY) {
             mySwitch = (Switch) findViewById(R.id.switch_value);
             mySeekBar = (SeekBar) findViewById(R.id.seekBar_value);
@@ -263,10 +271,12 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
     protected void onResume() {
 
         super.onResume();
+        if(device.getType() != Device.Type.SENSOR) {
+            sManager.registerListener(mHandler, sensor, SensorManager.SENSOR_DELAY_UI);
+        }
+            Intent intent = new Intent(this, DeviceService.class);
+            bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
-        sManager.registerListener(mHandler, sensor, SensorManager.SENSOR_DELAY_UI);
-        Intent intent = new Intent (this, DeviceService.class);
-        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -318,8 +328,9 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
 
     @Override
     public void deviceStateChanged(Device device) {
-        showNotification(device);
+
     }
+
 
     @Override
     public void tiltedAway() {
@@ -334,31 +345,48 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
     @Override
     public void tiltedLeft() {
         Log.d(TAG, "The phone is tilted left.");
+        mySeekBar = (SeekBar) findViewById(R.id.seekBar_value);
+        if(device.getValueType() == Device.ValueType.DECIMAL && device.getType() != Device.Type.SENSOR) {
+            int seekProgress = mySeekBar.getProgress();
+            seekProgress -= 1;
+           mySeekBar.setProgress(seekProgress);
+           device.changeDecimalValue(seekProgress);
+        }
     }
 
     @Override
     public void tiltedRight() {
         Log.d(TAG, "The phone is tilted right.");
+        mySeekBar = (SeekBar) findViewById(R.id.seekBar_value);
+        if(device.getValueType() == Device.ValueType.DECIMAL && device.getType() != Device.Type.SENSOR) {
+            int seekProgress = mySeekBar.getProgress();
+            seekProgress += 1;
+            mySeekBar.setProgress(seekProgress);
+            device.changeDecimalValue(seekProgress);
+        }
 
     }
     @Override
     public void faceDown() {
         Log.d(TAG, "The phone is upside-down.");
-        if(device.getValueType() == Device.ValueType.BINARY)
+        if(device.getValueType() == Device.ValueType.BINARY) {
             device.changeBinaryValue(false);
-        device.setBinaryValue(false);
+            device.setBinaryValue(false);
             Log.d(TAG, "The device is now: " + device.getBinaryValue());
+
             updateView();
+        }
     }
 
     @Override
     public void faceUp() {
         Log.d(TAG, "The phone is facing up.");
-            if(device.getValueType() == Device.ValueType.BINARY)
+            if(device.getValueType() == Device.ValueType.BINARY) {
                 device.changeBinaryValue(true);
-        device.setBinaryValue(true);
+                device.setBinaryValue(true);
                 Log.d(TAG, "The device is now: " + device.getBinaryValue());
                 updateView();
+            }
     }
 
 
@@ -372,43 +400,6 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
             addPreferencesFromResource(R.xml.preferences);
         }
     }
-
-        //Show notification on the system.
-        public void showNotification(Device device) {
-
-            NotificationCompat.Builder mBuilder =
-                    new NotificationCompat.Builder(this)
-                            .setSmallIcon(R.drawable.abc_edit_text_material)
-                            .setContentTitle("My notification")
-                            .setContentText(device.getName() + " has changed");
-            // Creates an explicit intent for an Activity in your app
-            Intent resultIntent = new Intent(this, DeviceActivity.class);
-            resultIntent.putExtra(DeviceActivity.EXTRA_CENTRAL_UNIT_URL, device.getCentralUnit().getURL());
-            resultIntent.putExtra(DeviceActivity.EXTRA_DEVICE_ID, device.getId());
-
-
-
-            // The stack builder object will contain an artificial back stack for the
-            // started Activity.
-            // This ensures that navigating backward from the Activity leads out of
-            // your application to the Home screen.
-            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-            // Adds the back stack for the Intent (but not the Intent itself)
-            stackBuilder.addParentStack(DeviceActivity.class);
-            // Adds the Intent that starts the Activity to the top of the stack
-            stackBuilder.addNextIntent(resultIntent);
-            PendingIntent resultPendingIntent =
-                    stackBuilder.getPendingIntent(
-                            0,
-                            PendingIntent.FLAG_UPDATE_CURRENT
-                    );
-            mBuilder.setContentIntent(resultPendingIntent);
-            NotificationManager mNotificationManager =
-                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            // mId allows you to update the notification later on.
-            mNotificationManager.notify(1, mBuilder.build());
-
-        }
 
     }
 

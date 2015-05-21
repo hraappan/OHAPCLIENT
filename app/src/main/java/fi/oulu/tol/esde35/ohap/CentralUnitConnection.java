@@ -1,9 +1,16 @@
 package fi.oulu.tol.esde35.ohap;
 
+import android.app.Application;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.*;
 import android.os.Process;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.opimobi.ohap.CentralUnit;
@@ -17,7 +24,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 
-import fi.oulu.tol.esde35.ohapclient35.DeviceService;
+import fi.oulu.tol.esde35.ohapclient35.DeviceActivity;
+import fi.oulu.tol.esde35.ohapclient35.R;
+
 
 /**
  * Created by Hannu Raappana on 6.5.2015.
@@ -28,16 +37,17 @@ public class CentralUnitConnection extends CentralUnit {
     private InputStream inputStream;
     private OutputStream outputStream;
     private HbdpConnection connection;
-    private DeviceService deviceService;
     private ConnectionManager cm;
     private Thread thread;
 
 
     private int nListeners;
 
+
     private void startNetworking() {
         Log.d(TAG, "Start networking. Connecting to;: " + getURL());
         connection = new HbdpConnection(getURL());
+
 
         inputStream = connection.getInputStream();
         outputStream = connection.getOutputStream();
@@ -325,6 +335,7 @@ thread.start();
 
                     break;
 
+                //Decimal value has changed.
                 case 0x09:
                     Log.d(TAG, "Decimal value changed.");
                     itemIdentifier = incomingMessage.integer32();
@@ -333,8 +344,13 @@ thread.start();
                     connection =(CentralUnitConnection) cm.getCentralUnit(getURL()).getItemById(itemDataParentIdentifier);
                     device = (Device) connection.getItemById(itemIdentifier);
                     device.setDecimalValue(dataValue);
+                    itemAddedEventSource.fireEvent(device);
+                    showNotification(device);
+
+
                     break;
 
+                //Binary value has changed.
                 case 0x0a:
                     Log.d(TAG, "Binary value changed.");
                     itemIdentifier = incomingMessage.integer32();
@@ -342,16 +358,23 @@ thread.start();
                     connection = (CentralUnitConnection) cm.getCentralUnit(getURL());
                     device = (Device) connection.getItemById(itemIdentifier);
                     device.setBinaryValue(binaryValue);
+                    showNotification(device);
+
+
 
                     break;
+
+                //Item has been destroyed.
                 case 0x0b:
                     Log.d(TAG, "Item destroyed.");
                     itemIdentifier = incomingMessage.integer32();
                     connection = (CentralUnitConnection) cm.getCentralUnit(getURL());
                     device = (Device) connection.getItemById(itemIdentifier);
                     device.destroy();
+                    showNotification(device);
                     break;
 
+                //Data cannot be parsed.
                 default:
                     Log.d(TAG, "Cannot parse data." + messageType);
 
@@ -361,6 +384,7 @@ thread.start();
         }
     }
 
+    //Stops the networking.
     private void stopNetworking() {
     Log.d(TAG, "Stopping networking");
 
@@ -379,6 +403,43 @@ thread.start();
         }
     }
 
+    //Send notification to the system.
+    private void showNotification(Device device) {
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(DeviceActivity.getContext())
+                        .setSmallIcon(R.drawable.abc_edit_text_material)
+                        .setContentTitle("My notification")
+                        .setContentText(device.getName() + " has changed");
+        // Creates an explicit intent for an Activity in your app
+        Intent resultIntent = new Intent(DeviceActivity.getContext(), DeviceActivity.class);
+        resultIntent.putExtra(DeviceActivity.EXTRA_CENTRAL_UNIT_URL, device.getCentralUnit().getURL());
+        resultIntent.putExtra(DeviceActivity.EXTRA_DEVICE_ID, device.getId());
+
+
+
+        // The stack builder object will contain an artificial back stack for the
+        // started Activity.
+        // This ensures that navigating backward from the Activity leads out of
+        // your application to the Home screen.
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(DeviceActivity.getContext());
+        // Adds the back stack for the Intent (but not the Intent itself)
+        stackBuilder.addParentStack(DeviceActivity.class);
+        // Adds the Intent that starts the Activity to the top of the stack
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        mBuilder.setContentIntent(resultPendingIntent);
+        NotificationManager mNotificationManager =
+                (NotificationManager) DeviceActivity.getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        // mId allows you to update the notification later on.
+        mNotificationManager.notify(1, mBuilder.build());
+
+    }
+
+    //Starts listening to a container.
     private void sendListeningStart(Container container) {
         OutgoingMessage message = new OutgoingMessage();
         Log.d(TAG, "Starting listening for: " + container.getId());
@@ -386,22 +447,25 @@ thread.start();
 
 
     }
-
+    //Stops listening to a container.
     private void sendListeningStop(Container container) {
         OutgoingMessage message = new OutgoingMessage();
         Log.d(TAG, "Stopping networking for: " + container.getId());
         message.integer8(0x0d).integer32((int)container.getId()).writeTo(outputStream);
     }
 
+    //
     public CentralUnitConnection(URL url) {
         super(url);
         cm = ConnectionManager.getInstance();
 
 
+
+
             //Dummy Device:
-/*
+
             Device device = new Device(this, 1, Device.Type.ACTUATOR, Device.ValueType.DECIMAL);
-            device.changeDecimalValue(40);
+            device.setDecimalValue(40);
             device.setName("Ceiling Lamp");
             //Dummy Device:
             Device device1 = new Device(this, 2, Device.Type.ACTUATOR, Device.ValueType.BINARY);
@@ -410,7 +474,8 @@ thread.start();
             //Dummy Device:
             Device device2 = new Device(this, 3, Device.Type.ACTUATOR, Device.ValueType.DECIMAL);
             device2.setName("Sauna lights");
-*/
+
+
 
     }
     /**

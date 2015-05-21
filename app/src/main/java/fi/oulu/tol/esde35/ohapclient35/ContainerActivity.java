@@ -8,9 +8,12 @@ import android.content.SharedPreferences;
 import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -38,6 +41,7 @@ public class ContainerActivity extends ActionBarActivity {
     public final static String EXTRA_CENTRAL_UNIT_URL = "fi.oulu.tol.esde35.CENTRAL_UNIT_URL";
     public final static String EXTRA_CONTAINER_ID = "fi.oulu.tol.esde35.CONTAINER_ID";
     private final static String TAG = "ContainerActivity";
+    private static ContainerActivity instance;
     private URL url;
     private DeviceService deviceService;
     private long containerID;
@@ -79,6 +83,10 @@ public class ContainerActivity extends ActionBarActivity {
         }
     };
 
+    //We need the context for notification.
+    public static Context getContenxt() {
+        return instance;
+    }
     @Override
     public void onStop() {
         super.onStop();
@@ -89,8 +97,13 @@ public class ContainerActivity extends ActionBarActivity {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
     public void onStart() {
-super.onStart();
+        super.onStart();
         Intent intent = new Intent (this, DeviceService.class);
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
@@ -98,6 +111,8 @@ super.onStart();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+
+        instance = this;
 
         Intent serviceIntent = new Intent(this, DeviceService.class);
         startService(serviceIntent);
@@ -155,7 +170,7 @@ super.onStart();
         container.startListening();
 
 
-        ContainerListAdapter myAdapter = new ContainerListAdapter(container);
+        final ContainerListAdapter myAdapter = new ContainerListAdapter(container);
         myListView.setAdapter(myAdapter);
 
         //Add listener to the myListView.
@@ -190,6 +205,7 @@ super.onStart();
                     Log.d(TAG, "The id of the unit is: " +id);
                     intent.putExtra(ContainerActivity.EXTRA_CENTRAL_UNIT_URL, url);
                     intent.putExtra(ContainerActivity.EXTRA_CONTAINER_ID, id);
+
                     startActivity(intent);
 
                 }
@@ -209,6 +225,45 @@ super.onStart();
                 }
         });
 
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_device, menu);
+        // Display the fragment as the main content.
+
+        return true;
+    }
+
+
+    //Class for holding the settings.
+    public static class SettingsFragment extends PreferenceFragment {
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+
+            // Load the preferences from an XML resource
+            addPreferencesFromResource(R.xml.preferences);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            Intent settingsIntent = new Intent(this, SettingsActivity.class);
+            startActivity(settingsIntent);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
 
     }
 

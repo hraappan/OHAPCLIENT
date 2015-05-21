@@ -1,5 +1,11 @@
 package fi.oulu.tol.esde35.ohap;
 
+import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 import android.util.Log;
 
 import com.opimobi.ohap.CentralUnit;
@@ -8,14 +14,19 @@ import com.opimobi.ohap.Container;
 import java.net.URL;
 import java.util.HashMap;
 
+import fi.oulu.tol.esde35.ohapclient35.DeviceService;
+
 /**
  * Created by Hannu Raappana on 6.5.2015.
  */
-public class ConnectionManager
+public class ConnectionManager extends Activity
 {
     private static ConnectionManager cm = null;
     private HashMap<URL, CentralUnitConnection> connectionMap = new HashMap();
     private static final String TAG = "ConnectionManager";
+    private DeviceService deviceService;
+
+
 
 
     private ConnectionManager(){
@@ -43,4 +54,5 @@ public class ConnectionManager
 
         return cm;
     }
+
 }
