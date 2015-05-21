@@ -1,8 +1,5 @@
 package fi.oulu.tol.esde35.ohapclient35;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -14,8 +11,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.preference.SwitchPreference;
-import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -31,7 +26,6 @@ import android.widget.Toast;
 
 import com.opimobi.ohap.CentralUnit;
 import com.opimobi.ohap.Device;
-import com.opimobi.ohap.EventSource;
 
 import java.net.URL;
 

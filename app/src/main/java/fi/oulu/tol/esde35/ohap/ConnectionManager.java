@@ -1,15 +1,9 @@
 package fi.oulu.tol.esde35.ohap;
 
 import android.app.Activity;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
-import android.os.IBinder;
 import android.util.Log;
 
 import com.opimobi.ohap.CentralUnit;
-import com.opimobi.ohap.Container;
 
 import java.net.URL;
 import java.util.HashMap;

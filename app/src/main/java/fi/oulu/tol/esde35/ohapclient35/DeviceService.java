@@ -14,21 +14,13 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.opimobi.ohap.CentralUnit;
-import com.opimobi.ohap.Container;
 import com.opimobi.ohap.Device;
 import com.opimobi.ohap.HbdpConnection;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import fi.oulu.tol.esde35.ohap.CentralUnitConnection;
-import fi.oulu.tol.esde35.ohap.ConnectionManager;
-import fi.oulu.tol.esde35.ohap.IncomingMessage;
-import fi.oulu.tol.esde35.ohap.OutgoingMessage;
 
 /**
  * Created by Hannu Raappana on 27.4.2015.

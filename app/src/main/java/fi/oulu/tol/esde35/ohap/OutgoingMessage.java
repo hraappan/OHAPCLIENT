@@ -2,14 +2,8 @@ package fi.oulu.tol.esde35.ohap;
 
 import android.util.Log;
 
-import org.apache.http.util.ByteArrayBuffer;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.Array;
-import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 

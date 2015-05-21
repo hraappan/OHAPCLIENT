@@ -2,8 +2,6 @@ package fi.oulu.tol.esde35.ohapclient35;
 
 import com.opimobi.ohap.Device;
 
-import java.util.Observer;
-
 /**
  * Created by Hannu Raappana on 30.4.2015.
  *

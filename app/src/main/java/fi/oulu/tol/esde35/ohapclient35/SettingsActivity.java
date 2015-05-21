@@ -7,14 +7,12 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.preference.SwitchPreference;
-import android.util.Log;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceFragment;
-import android.widget.Switch;
-import android.widget.TextView;
+import android.preference.SwitchPreference;
+import android.util.Log;
 
 /**
  * Created by Hannu Raappana on 26.4.2015.

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceFragment;
@@ -19,16 +18,11 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.opimobi.ohap.CentralUnit;
 import com.opimobi.ohap.Container;
-import com.opimobi.ohap.EventSource;
-import com.opimobi.ohap.Item;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.EventListener;
 
-import fi.oulu.tol.esde35.ohap.CentralUnitConnection;
 import fi.oulu.tol.esde35.ohap.ConnectionManager;
 
 /**

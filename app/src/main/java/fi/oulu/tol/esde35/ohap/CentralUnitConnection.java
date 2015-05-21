@@ -1,15 +1,12 @@
 package fi.oulu.tol.esde35.ohap;
 
-import android.app.Application;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.os.*;
-import android.os.Process;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 

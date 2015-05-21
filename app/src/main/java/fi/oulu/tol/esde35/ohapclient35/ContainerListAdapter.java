@@ -12,14 +12,7 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.opimobi.ohap.Container;
-import com.opimobi.ohap.Device;
 import com.opimobi.ohap.EventSource;
-import com.opimobi.ohap.Item;
-
-import java.util.ArrayList;
-
-import fi.oulu.tol.esde35.ohap.CentralUnitConnection;
-import fi.oulu.tol.esde35.ohapclient35.R;
 
 /**
  * Created by Hannu Raappana on 13.4.2015.
