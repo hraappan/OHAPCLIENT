@@ -8,6 +8,20 @@
         <EditTextPreference
             android:key="url"
             android:title="OHAP Server Address:"
-            android:defaultValue="@string/preferences">http://ohap.opimobi.com:8080/</EditTextPreference>
+            android:defaultValue="@string/preferences">http://ohap.opimobi.com:18000/</EditTextPreference>
+
+        <SwitchPreference
+            android:key="sensor"
+            android:title="Sensors"
+            android:switchTextOff="The sensors are off"
+            android:switchTextOn="The sensors are on"
+            android:defaultValue="true"/>
+
+        <EditTextPreference
+            android:key="boolean"
+            android:title="Sensors are on: "
+            android:defaultValue="@string/sensors"> true </EditTextPreference>
+
+
     </PreferenceCategory>
 </PreferenceScreen>

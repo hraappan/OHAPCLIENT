@@ -454,7 +454,7 @@ thread.start();
         message.integer8(0x0d).integer32((int)container.getId()).writeTo(outputStream);
     }
 
-    //
+    //Constructor
     public CentralUnitConnection(URL url) {
         super(url);
         cm = ConnectionManager.getInstance();
@@ -462,8 +462,8 @@ thread.start();
 
 
 
-            //Dummy Device:
-
+            //Dummy Devices for testing purposes:
+/*
             Device device = new Device(this, 1, Device.Type.ACTUATOR, Device.ValueType.DECIMAL);
             device.setDecimalValue(40);
             device.setName("Ceiling Lamp");
@@ -474,7 +474,7 @@ thread.start();
             //Dummy Device:
             Device device2 = new Device(this, 3, Device.Type.ACTUATOR, Device.ValueType.DECIMAL);
             device2.setName("Sauna lights");
-
+*/
 
 
     }

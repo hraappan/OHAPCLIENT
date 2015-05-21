@@ -153,6 +153,11 @@ public class DeviceService extends Service implements DeviceObserver, DeviceServ
     }
 
     @Override
+    public void sensorsStateChanged(boolean isOn) {
+
+    }
+
+    @Override
     public void setObserver(DeviceObserver obs) {
         this.observer = obs;
     }

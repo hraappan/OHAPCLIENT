@@ -7,11 +7,14 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.SwitchPreference;
 import android.util.Log;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceFragment;
+import android.widget.Switch;
+import android.widget.TextView;
 
 /**
  * Created by Hannu Raappana on 26.4.2015.
@@ -50,7 +53,7 @@ public class SettingsActivity extends Activity {
                 .commit();
 
         Intent intent = new Intent(this, DeviceService.class);
-        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+        startService(intent);
 
 
     }
@@ -78,6 +81,7 @@ public class SettingsActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+
 
     }
 
@@ -115,6 +119,13 @@ public class SettingsActivity extends Activity {
         unbindService(serviceConnection);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        Intent intent = new Intent(this, DeviceService.class);
+        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+    }
+
     /**
      * A placeholder fragment containing a simple view.
      */
@@ -128,6 +139,24 @@ public class SettingsActivity extends Activity {
             addPreferencesFromResource(R.xml.preferences);
             EditTextPreference editedUrl = (EditTextPreference) findPreference("url");
             editedUrl.setSummary(editedUrl.getText());
+
+            final SwitchPreference sensors = (SwitchPreference) findPreference("sensor");
+            sensors.setChecked(true);
+
+            sensors.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Log.d(TAG, "The sensors are changed...the current status is" + sensors.isChecked());
+                    EditTextPreference editedBoolean = (EditTextPreference) findPreference("boolean");
+                    editedBoolean.setSummary(String.valueOf(sensors.isChecked()));
+                    editedBoolean.setText(String.valueOf(sensors.isChecked()));
+                    Log.d(TAG, "The edited  boolean is now: " + editedBoolean);
+                    deviceService.sensorsStateChanged(sensors.isChecked());
+                    return true;
+
+                }
+            });
+
 
             editedUrl.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
                 @Override

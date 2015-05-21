@@ -7,11 +7,14 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
+import android.preference.SwitchPreference;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -59,7 +62,9 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
     private URL address;
     private SensorManager sManager;
     private DeviceOrientationHandler mHandler;
+    private String sensors;
     private Sensor sensor;
+    private SharedPreferences prefs;
     public DeviceActivity() {
 
     }
@@ -103,19 +108,25 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
         }
     };
 
-    public static Context getContext() {
+    public static DeviceActivity getContext() {
         return instance;
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         instance = this;
 
+        prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        sensors = prefs.getString("isOn", "");
+
         //Get the sensors.
         sManager = (SensorManager) this.getSystemService(SENSOR_SERVICE);
         sensor = sManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mHandler = new DeviceOrientationHandler(this);
-        sManager.registerListener(mHandler, sensor, SensorManager.SENSOR_DELAY_UI);
+
+        if(sensors.contentEquals("true"))
+            sManager.registerListener(mHandler, sensor, SensorManager.SENSOR_DELAY_UI);
 
         setContentView(R.layout.device_view);
         myTextViewName = (TextView) findViewById(R.id.textView_name);
@@ -186,8 +197,9 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
             mySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     Log.d(TAG, "Switch is checked: " + isChecked);
-                    device.setBinaryValue(isChecked);
                     device.changeBinaryValue(isChecked);
+                    device.setBinaryValue(isChecked);
+
                 }
             });
 
@@ -201,7 +213,7 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
         else if(device.getValueType() == Device.ValueType.DECIMAL && device.getType() == Device.Type.ACTUATOR){
             Log.d(TAG, "Decimal type selected:");
             final EditText editText = (EditText) findViewById(R.id.editText_value);
-            editText.setText(Integer.toString((int) device.getDecimalValue()));
+            editText.setText(Integer.toString((int) device.getDecimalValue()) + " %");
             editText.setVisibility(View.VISIBLE);
             mySeekBar = (SeekBar) findViewById(R.id.seekBar_value);
             mySeekBar.setProgress((int)device.getDecimalValue());
@@ -271,8 +283,18 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
     protected void onResume() {
 
         super.onResume();
-        if(device.getType() != Device.Type.SENSOR) {
+
+
+        sensors = prefs.getString("boolean", "");
+        Log.d(TAG, "The sensors are: " + sensors);
+        if(device.getType() != Device.Type.SENSOR && sensors.contentEquals("true")) {
+            Log.d(TAG, "Registering sensors");
             sManager.registerListener(mHandler, sensor, SensorManager.SENSOR_DELAY_UI);
+        }
+
+        else {
+            sManager.unregisterListener(mHandler);
+            Log.d(TAG, "Unregistering sensors");
         }
             Intent intent = new Intent(this, DeviceService.class);
             bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
@@ -331,6 +353,10 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
 
     }
 
+    @Override
+    public void sensorsStateChanged(boolean isOn) {
+        Log.d(TAG, "The sensors are now: " + isOn);
+    }
 
     @Override
     public void tiltedAway() {

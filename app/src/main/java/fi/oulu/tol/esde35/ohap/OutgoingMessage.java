@@ -144,13 +144,13 @@ public class OutgoingMessage {
         position++;
         buffer[position] = (byte)(v >> 40);
         position++;
-        buffer[position] = (byte)(v >>  32);
+        buffer[position] = (byte)(v >> 32);
         position++;
-        buffer[position] = (byte)(v >>  24);
+        buffer[position] = (byte)(v >> 24);
         position++;
         buffer[position] = (byte)(v >> 16);
         position++;
-        buffer[position] = (byte)(v >>  8);
+        buffer[position] = (byte)(v >> 8);
         position++;
         buffer[position] = (byte)(v);
         position++;

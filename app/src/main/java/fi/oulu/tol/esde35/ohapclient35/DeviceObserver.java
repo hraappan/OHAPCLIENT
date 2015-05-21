@@ -12,5 +12,6 @@ import java.util.Observer;
 public interface DeviceObserver {
 
         public void deviceStateChanged(Device device);
+        public void sensorsStateChanged(boolean isOn);
 
 }
