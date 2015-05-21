@@ -345,6 +345,7 @@ thread.start();
                     device = (Device) connection.getItemById(itemIdentifier);
                     device.setDecimalValue(dataValue);
                     itemAddedEventSource.fireEvent(device);
+                    DeviceActivity.getContext().deviceStateChanged(device);
                     showNotification(device);
 
 
@@ -359,6 +360,7 @@ thread.start();
                     device = (Device) connection.getItemById(itemIdentifier);
                     device.setBinaryValue(binaryValue);
                     showNotification(device);
+                    DeviceActivity.getContext().deviceStateChanged(device);
 
 
 
@@ -372,6 +374,7 @@ thread.start();
                     device = (Device) connection.getItemById(itemIdentifier);
                     device.destroy();
                     showNotification(device);
+                    DeviceActivity.getContext().deviceStateChanged(device);
                     break;
 
                 //Data cannot be parsed.

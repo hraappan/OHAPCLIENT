@@ -350,7 +350,9 @@ public class DeviceActivity extends ActionBarActivity implements DeviceObserver,
 
     @Override
     public void deviceStateChanged(Device device) {
-
+        if(this.device == device)
+            this.device = device;
+        updateView();
     }
 
     @Override

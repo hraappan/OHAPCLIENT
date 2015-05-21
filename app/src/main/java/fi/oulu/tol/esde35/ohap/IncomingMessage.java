@@ -144,7 +144,7 @@ int int32 = 0;
             }
 
         Log.d(TAG, "The bits are:_" + bits);
-        double d = Double.longBitsToDouble(bits);
+        double d = Double.valueOf(bits);
         Log.d(TAG, "The value is : " + d);
     return d;
     }
