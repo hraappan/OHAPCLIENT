@@ -11,7 +11,8 @@ disable the sensors that are used. When the sensors are on it is possible to shu
 binary device by turning the phone up-side down. With decimal device it is possible
 to increase or decrease the value by tilting the phone to the right or to the left, respectfully.
 The system informs about the changes in the system and also make changes to the state of
-the device in real-time.
+the device in real-time. It also makes notifications even if the program is in the
+background.
 
 
 Testing:
