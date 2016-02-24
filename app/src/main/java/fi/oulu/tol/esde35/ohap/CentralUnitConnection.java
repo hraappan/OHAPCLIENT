@@ -52,8 +52,8 @@ public class CentralUnitConnection extends CentralUnit {
         OutgoingMessage outgoingMessage = new OutgoingMessage();
         outgoingMessage.integer8(0x00)      // message-type-login
                 .integer8(0x01)      // protocol-version
-                .text("hraappan")        // login-name
-                .text("vfLGK30S")    // login-password
+                .text("")        // login-name
+                .text("")    // login-password
                 .writeTo(outputStream);
 
 
